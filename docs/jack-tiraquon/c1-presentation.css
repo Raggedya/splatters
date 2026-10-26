@@ -1,0 +1,75 @@
+/* Target-reference presentation only. Existing nodes, handlers and UV mapping. */
+.scene{--art-size:min(66vw,calc(100svh * .44));--art-top:11.3%;max-width:854px;display:block;padding:0;height:100svh}
+.environment{background-image:url('assets/browser/studio-target.webp');background-position:center;background-size:100% 100%}
+.atmosphere{background:none}
+.scene header{position:absolute;inset:0 4% auto 2%;height:11%;padding:0;align-items:flex-start;pointer-events:none}
+.wordmark{width:clamp(90px,17svh,155px);height:100%;margin-top:-5px;letter-spacing:0}
+.wordmark img{width:100%;height:100%;object-fit:contain;object-position:left center}
+output{position:relative;padding-top:8px;font:bold italic clamp(39px,8.4vw,90px)/1 Georgia,serif;letter-spacing:-2px;color:#f4da89;transform:rotate(-7deg);text-shadow:0 1px 1px #6c4f20}
+output small{font-size:.53em;margin-left:0}
+.complete-label{display:none;font:600 10px/1.2 system-ui;letter-spacing:2px;text-align:center;color:#fff6dc}
+.complete .complete-label{display:block}
+.complete-label:after{content:'';display:block;width:70%;height:2px;background:#edce78;margin:4px auto 0;transform:rotate(-7deg)}
+.artwork-stage{position:absolute;left:51.2%;top:calc(var(--art-top) - 17.5px);width:calc(var(--art-size) + 32px);height:calc(var(--art-size) + 35px);padding:0;align-items:center;transform:translateX(-50%);perspective:1500px;perspective-origin:50% 82%}
+.canvas-object{transform:matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);outline:1px solid #e4c66a;box-shadow:0 3px 20px #0008}
+.canvas-back,.canvas-edge{display:none}
+.track-caption{position:absolute;top:calc(var(--art-top) + var(--art-size) + 10px);left:18%;width:66%;text-align:center;display:grid;gap:3px;pointer-events:none;text-shadow:0 2px 4px #000}
+.track-caption strong{font:600 clamp(12px,2.8vw,24px)/1.2 system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-caption span{font:400 clamp(10px,2.1vw,18px)/1.2 system-ui;color:#dedbd0}
+.player-slot{position:absolute;left:18%;width:66%;top:calc(var(--art-top) + var(--art-size) + 53px);height:42px;border:1px solid #bca66488;border-radius:5px;background:#181a1b;box-shadow:0 3px 15px #0009}
+/* Decorative record stays outside the provider frame and its replacement lifecycle. */
+.player-vinyl{position:absolute;left:calc(84% + 5px);top:calc(var(--art-top) + var(--art-size) + 74px);width:min(11%,64px);aspect-ratio:1;transform:translateY(-50%);z-index:4;pointer-events:none;user-select:none}
+.player-vinyl img{display:block;width:100%;height:100%;object-fit:contain;transform-origin:center;animation:c1-player-vinyl 2.57s linear infinite}
+@keyframes c1-player-vinyl{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media(min-width:600px){.player-vinyl{top:calc(var(--art-top) + var(--art-size) + 97px)}}
+@media(max-height:700px){.player-vinyl{top:calc(var(--art-top) + var(--art-size) + 64px)}}
+@media(prefers-reduced-motion:reduce){.player-vinyl img{animation:none}}
+.action-slot{position:absolute;top:calc(var(--art-top) + var(--art-size) + 100px);left:18%;width:66%;height:44px}
+.action-slot button{min-height:40px;padding:0 20px;border-color:#d7bc74;color:#f7e9b9;background:linear-gradient(140deg,#3a3021,#141414);font-size:15px;box-shadow:inset 0 1px 1px #ffecb550,0 4px 10px #0006}
+#music-confirm{font-size:23px}
+.launcher-stage{position:absolute;left:0;width:100%;top:max(72%,calc(var(--art-top) + var(--art-size) + 150px));height:calc(28% - 20px)}
+.launcher{transform:none;width:230px;height:100%;transition:opacity 1.2s ease .7s}
+.scene.settled .launcher{opacity:0;pointer-events:none}
+.scene.settled .c1-grab{pointer-events:none}
+/* The nav's layout box remains below the pullback region: physics reads its
+   top as the safe thumb boundary. Only its existing controls float at left. */
+.glass-controls{position:absolute;left:0;right:0;bottom:28px;width:100%;height:1px;padding:0;margin:0;border:0;border-radius:0;background:none;box-shadow:none;backdrop-filter:none;pointer-events:none;display:block}
+.glass-controls button,.glass-controls #buy{position:fixed;left:max(calc((100vw - 854px)/2 + 12px),3%);width:clamp(46px,12vw,102px);height:clamp(48px,8.3svh,106px);min-height:44px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid #d4b46d;border-radius:14px;color:#f8f1da;background:linear-gradient(135deg,#29271fe8,#090a0ce8);box-shadow:inset 0 1px 3px #ffeac140,0 3px 10px #0008;pointer-events:auto;font:500 clamp(8px,1.5vw,13px)/1.2 system-ui;letter-spacing:.1px;text-decoration:none;white-space:normal;text-align:center}
+.glass-controls .glyph{color:#f1d888;width:clamp(21px,3.9vw,34px);height:clamp(21px,3.9vw,34px)}
+#save{top:14.2%}#share{top:23.3%}.glass-controls #buy{top:32.4%}#next{top:41.5%}
+.glass-controls #replay{top:auto;bottom:28px;left:3%;height:44px;width:52px;border-radius:12px;font-size:8px}
+.first-play-cue[data-cue=start] svg{transform:rotate(90deg)}
+.first-play-cue[data-cue=start]{animation:c1-point-right 1.5s ease-in-out infinite}
+@keyframes c1-point-right{0%,100%{transform:translateX(-2px);opacity:.7}50%{transform:translateX(2px);opacity:1}}
+footer{position:absolute;bottom:3px;left:3%;right:3%;height:20px;flex-wrap:nowrap;opacity:.8}
+#c1-status{font-size:8px;max-width:70%}
+footer>a{font-size:7px}
+@media(min-width:600px){.launcher{transform:scale(1.55);transform-origin:50% 0}.player-slot{height:42px}.track-caption{top:calc(var(--art-top) + var(--art-size) + 16px)}.player-slot{top:calc(var(--art-top) + var(--art-size) + 76px)}.action-slot{top:calc(var(--art-top) + var(--art-size) + 124px)}}
+@media(max-height:700px){.scene{--art-top:11%;--art-size:min(66vw,calc(100svh * .40))}.launcher-stage{top:76%}.launcher{transform:scale(.85);transform-origin:50% 0}.track-caption{top:calc(var(--art-top) + var(--art-size) + 7px)}.player-slot{top:calc(var(--art-top) + var(--art-size) + 43px)}.action-slot{top:calc(var(--art-top) + var(--art-size) + 90px)}.action-slot button{min-height:36px}.glass-controls button,.glass-controls #buy{border-radius:10px}}
+@supports(padding:env(safe-area-inset-top)){.scene{margin-top:0}.scene header{padding-top:var(--c1-safe-top,env(safe-area-inset-top))}footer{bottom:max(3px,var(--c1-safe-bottom,env(safe-area-inset-bottom)))}.glass-controls #replay{bottom:calc(28px + var(--c1-safe-bottom,env(safe-area-inset-bottom)))}}
+
+/* C1.6: choreography owns opacity; geometry and assets remain unchanged. */
+.launcher{transition:none}
+.scene.settled .launcher{opacity:1}
+#start:not([hidden]){animation:c16-start-in .3s ease-out}
+@keyframes c16-start-in{from{opacity:0}to{opacity:1}}
+#completion-actions{position:absolute;z-index:7;top:max(73%,calc(var(--art-top) + var(--art-size) + 150px));left:18%;width:66%;display:grid;gap:12px;justify-items:center;opacity:0}
+.completion-pair{display:flex;justify-content:center;gap:10px;width:100%}
+#completion-actions #buy,#completion-actions #next,#visit-bandcamp{position:static;display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:46px;padding:9px 12px;border:1px solid #d4b46d;border-radius:24px;background:linear-gradient(135deg,#29271ff5,#090a0cf2);box-shadow:inset 0 1px 3px #ffeac130,0 3px 10px #0006;color:#f8e6b8;font:600 clamp(9px,2.2vw,15px)/1.35 system-ui;letter-spacing:.5px;text-align:center;text-decoration:none;white-space:normal;flex:1}
+#completion-actions .glyph{display:none}
+#completion-actions br{display:none}
+#completion-actions br:after{content:' '}
+#visit-bandcamp{flex:none;font-size:clamp(9px,2vw,13px);padding-inline:22px}
+#completion-actions [inert],.glass-controls [inert]{pointer-events:none}
+@media(max-height:700px){#completion-actions{top:75%;gap:9px}#completion-actions #buy,#completion-actions #next,#visit-bandcamp{min-height:44px;padding-inline:8px}}
+
+/* Read-only aggregate: separate from gameplay controls and their geometry. */
+#visits-counter{position:fixed;left:3%;bottom:calc(80px + var(--c1-safe-bottom,env(safe-area-inset-bottom,0px)));width:52px;height:34px;box-sizing:border-box;z-index:5;display:grid;align-content:center;gap:3px;text-align:center;border:1px solid #8e794c;border-radius:6px;background:linear-gradient(#202630,#10151b);box-shadow:inset 0 1px 1px #d1b77633,0 2px 5px #0006;pointer-events:none;color:#e9d6a4}
+#visits-counter span{font:500 7px/1 system-ui;letter-spacing:1px}
+#visits-counter strong{font:600 10px/1.2 ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap}
+
+/* Optional commerce action uses the existing completion treatment. */
+#buy-merch{display:flex;align-items:center;justify-content:center;min-height:46px;padding:9px 12px;border:1px solid #d4b46d;border-radius:24px;background:linear-gradient(135deg,#29271ff5,#090a0cf2);box-shadow:inset 0 1px 3px #ffeac130,0 3px 10px #0006;color:#f8e6b8;font:600 clamp(9px,2.2vw,15px)/1.35 system-ui;letter-spacing:.5px;text-align:center;text-decoration:none;box-sizing:border-box}
+#completion-actions.with-merch .completion-pair{flex-wrap:wrap}#completion-actions.with-merch .completion-pair>*{flex:1 1 calc(50% - 10px);box-sizing:border-box;padding-inline:7px}#completion-actions.with-merch #visit-bandcamp{font-size:clamp(9px,2vw,13px)}
+
+#completion-actions.with-merch #buy,#completion-actions.with-merch #next,#completion-actions.with-merch #buy-merch,#completion-actions.with-merch #visit-bandcamp{flex:1 1 calc(50% - 10px);width:auto;max-width:none}
