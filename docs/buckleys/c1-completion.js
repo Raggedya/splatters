@@ -9,8 +9,8 @@ export function artistDestination(config,entry){
 }
 // One pair of real controls is reparented only while invisible and inert.
 export class CompletionUI {
- constructor({scene,launcher,nav,root,buy,next,visit,merch=null,reduced}){Object.assign(this,{scene,launcher,nav,root,buy,next,visit,merch,reduced});this.version=0;this.phase='playing';this.animations=new Set();}
- setPhase(phase){this.phase=phase;this.scene.dataset.completion=phase;}
+ constructor({scene,launcher,nav,root,buy,next,visit,merch=null,reduced,onLayout=()=>{}}){Object.assign(this,{scene,launcher,nav,root,buy,next,visit,merch,reduced,onLayout});this.version=0;this.phase='playing';this.animations=new Set();}
+ setPhase(phase){this.phase=phase;this.scene.dataset.completion=phase;this.onLayout();}
  async fade(el,from,to,ms){if(this.reduced.matches){el.style.opacity=to;return;}const a=el.animate([{opacity:from},{opacity:to}],{duration:ms,easing:'ease',fill:'forwards'});this.animations.add(a);try{await a.finished;el.style.opacity=to;}catch{}finally{a.cancel();this.animations.delete(a);}}
  cancel(){this.version++;for(const a of this.animations)a.cancel();this.animations.clear();}
  async finish(){if(this.phase!=='playing')return;const v=this.version;this.setPhase('settling');
@@ -23,7 +23,7 @@ export class CompletionUI {
  }
  async reset(){this.cancel();const v=this.version;this.setPhase('resetting');this.root.inert=true;this.buy.inert=this.next.inert=true;
   if(!this.root.hidden)await this.fade(this.root,Number(getComputedStyle(this.root).opacity),0,180);if(v!==this.version)return false;
-  this.root.hidden=true;this.root.classList.remove('with-merch');this.root.append(this.visit);this.next.hidden=false;this.nav.append(this.next,this.buy);this.buy.style.opacity=this.next.style.opacity='1';this.buy.inert=this.next.inert=false;
+  this.root.hidden=true;this.root.classList.remove('with-merch');this.root.append(this.visit);this.next.hidden=this.nextAvailable===false;this.nav.append(this.buy,this.next);this.buy.style.opacity=this.next.style.opacity='1';this.buy.inert=this.next.inert=false;
   const from=Number(getComputedStyle(this.launcher).opacity);this.setPhase('playing');this.fade(this.launcher,from,1,400);return true;
  }
  dispose(){this.cancel();}
