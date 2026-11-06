@@ -1,5 +1,17 @@
 <!doctype html>
-<html lang="en" data-release="1"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a0c"><title>sPlatters Studio Branding Demo on sPlatters</title><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="c1.css?flow=direct152"><link rel="stylesheet" href="c1-presentation.css?flow=direct152"><link rel="canonical" href="https://raggedya.github.io/splatters/studio-branding-demo/">
+<html lang="en" data-release="1"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a0c"><title>sPlatters Studio Branding Demo on sPlatters</title><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="c1.css?flow=direct152"><link rel="stylesheet" href="c1-presentation.css?flow=direct152">
+<style>
+ .scene .environment[data-artist-artwork]{background:#12140a;overflow:hidden}
+ [data-artist-artwork]::before{content:"";position:absolute;inset:-8px;
+   background-image:var(--source-cover);background-size:350% auto;background-position:8% 43%;
+   filter:blur(2.4px) brightness(.52) saturate(.92)}
+ [data-artist-artwork] > img{position:absolute;display:block;max-width:none;width:112%;height:auto;
+   min-height:62%;max-height:80%;object-fit:cover;object-position:center 62%;
+   left:-6%;bottom:-2%;filter:brightness(.79);mask-image:linear-gradient(transparent,#000 18%)}
+ [data-artist-artwork]::after{content:"";position:absolute;inset:0;pointer-events:none;
+   background:radial-gradient(ellipse at 52% 59%,transparent 48%,#08080a55 100%),
+     linear-gradient(180deg,#08080b40,transparent 20%,transparent 49%,#08080b4d 57%,transparent 69%,transparent 83%,#08080a88 100%)}
+</style><link rel="canonical" href="https://raggedya.github.io/splatters/studio-branding-demo/">
 <meta property="og:title" content="sPlatters Studio Branding Demo on sPlatters">
 <meta property="og:description" content="Discover sPlatters Studio Branding Demo on sPlatters — listen to the music and reveal the artwork.">
 <meta property="og:image" content="https://raggedya.github.io/splatters/studio-branding-demo/social/default-549c1cfaa2ebef3187e4c7a10520df88d7054635694919bc1b2dee570beea99d.png">
@@ -18,7 +30,7 @@
 <meta name="description" content="Discover sPlatters Studio Branding Demo on sPlatters — listen to the music and reveal the artwork.">
 </head>
 <body><main class="scene" aria-label="Interactive cinematic launcher and canvas collision">
- <div class="environment" aria-hidden="true" style="background-image:url('theme/studio-689a333e78a2fd4d9fe5.webp'),url('assets/browser/studio-target.webp')"></div><div class="atmosphere" aria-hidden="true"></div>
+ <div class="environment" aria-hidden="true" data-artist-artwork style="--source-cover:url('theme/artwork-99d357ed99c6bd347980.webp')"><img src="theme/artwork-99d357ed99c6bd347980.webp" alt="" draggable="false"></div><div class="atmosphere" aria-hidden="true"></div>
  <header><div class="wordmark" aria-label="sPlatters"><img src="assets/browser/brand-record.webp" alt="sPlatters"></div><output aria-label="Artwork revealed"><span id="number">0</span><small>%</small><span class="complete-label">COMPLETE</span></output></header>
  <section class="artwork-stage" aria-label="Original artwork on physical canvas"><div class="canvas-object"><div class="canvas-back" aria-hidden="true"></div><div class="canvas-edge bottom" aria-hidden="true"></div><div class="canvas-edge side" aria-hidden="true"></div><canvas id="surface" aria-label="Artwork reveal"></canvas></div></section>
  <div class="track-caption"><strong id="track-title"></strong><span id="track-artist"></span></div><section class="player-slot" aria-label="Genuine official Bandcamp player"><iframe id="bandcamp" title="Official Bandcamp player" referrerpolicy="no-referrer"></iframe></section>
