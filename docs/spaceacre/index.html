@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-release="1"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a0c"><title>SpaceAcre on sPlatters</title><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="c1.css?flow=direct152"><link rel="stylesheet" href="c1-presentation.css?flow=direct152"><link rel="canonical" href="https://raggedya.github.io/splatters/spaceacre/">
+<html lang="en" data-release="1"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a0c"><title>SpaceAcre on sPlatters</title><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="c1.css?flow=direct152"><link rel="stylesheet" href="c1-presentation-v170.css"><link rel="canonical" href="https://raggedya.github.io/splatters/spaceacre/">
 <meta property="og:title" content="SpaceAcre on sPlatters">
 <meta property="og:description" content="Discover SpaceAcre on sPlatters — listen to the music and reveal the artwork.">
 <meta property="og:image" content="https://raggedya.github.io/splatters/spaceacre/social/preview-f38da1e47ad5eb0b8cbb3e7cd8cbcb241f7f67ada2f13775bbb1e6a5bc1c9182.png">
@@ -18,14 +18,53 @@
 <meta name="description" content="Discover SpaceAcre on sPlatters — listen to the music and reveal the artwork.">
 </head>
 <body><main class="scene" aria-label="Interactive cinematic launcher and canvas collision">
- <div class="environment" aria-hidden="true" style="background-image:url('theme/studio-877b7903bf4019c531a6.webp'),url('assets/browser/studio-target.webp')"></div><div class="atmosphere" aria-hidden="true"></div>
- <header><div class="wordmark" aria-label="sPlatters"><img src="assets/browser/brand-record.webp" alt="sPlatters"></div><output aria-label="Artwork revealed"><span id="number">0</span><small>%</small><span class="complete-label">COMPLETE</span></output></header>
- <section class="artwork-stage" aria-label="Original artwork on physical canvas"><div class="canvas-object"><div class="canvas-back" aria-hidden="true"></div><div class="canvas-edge bottom" aria-hidden="true"></div><div class="canvas-edge side" aria-hidden="true"></div><canvas id="surface" aria-label="Artwork reveal"></canvas></div></section>
- <div class="track-caption"><strong id="track-title"></strong><span id="track-artist"></span></div><section class="player-slot" aria-label="Genuine official Bandcamp player"><iframe id="bandcamp" title="Official Bandcamp player" referrerpolicy="no-referrer"></iframe></section>
- <div class="player-vinyl" aria-hidden="true"><img src="assets/browser/brand-record.webp" alt="" draggable="false"></div>
+ <div class="environment" aria-hidden="true"></div><div class="atmosphere" aria-hidden="true"></div>
+ <output aria-label="Artwork revealed"><span id="number">0</span><small>%</small><span class="complete-label">COMPLETE</span></output>
+ <section class="artwork-stage" aria-label="Original artwork on physical canvas"><div class="canvas-object"><div class="canvas-back" aria-hidden="true"></div><div class="canvas-edge bottom" aria-hidden="true"></div><div class="canvas-edge side" aria-hidden="true"></div><canvas id="surface" aria-label="Artwork reveal"></canvas>
+  <svg class="canvas-frame" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+   <defs>
+    <linearGradient id="canvas-rail-bevel" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="13">
+     <stop offset="0" stop-color="#22130d"/><stop offset=".08" stop-color="#bf8b57"/>
+     <stop offset=".15" stop-color="#6d442d"/><stop offset=".25" stop-color="#1a1210"/>
+     <stop offset=".39" stop-color="#0d0b0b"/><stop offset=".52" stop-color="#382319"/>
+     <stop offset=".66" stop-color="#91603c"/><stop offset=".76" stop-color="#e2b37d"/>
+     <stop offset=".84" stop-color="#754824"/><stop offset=".94" stop-color="#23160f"/>
+     <stop offset="1" stop-color="#0c0908"/>
+    </linearGradient>
+    <linearGradient id="canvas-rail-reflection" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="512" y2="0">
+     <stop offset="0" stop-color="#f3ad67" stop-opacity=".38"/><stop offset=".11" stop-color="#c88d50" stop-opacity=".03"/>
+     <stop offset=".36" stop-color="#edc490" stop-opacity=".08"/><stop offset=".49" stop-color="#fff0d0" stop-opacity=".88"/>
+     <stop offset=".58" stop-color="#e6ad77" stop-opacity=".25"/><stop offset=".79" stop-color="#bb7946" stop-opacity=".04"/>
+     <stop offset="1" stop-color="#e9b479" stop-opacity=".48"/>
+    </linearGradient>
+    <radialGradient id="canvas-fastener" cx=".36" cy=".28" r=".73">
+     <stop offset="0" stop-color="#fff0c8"/><stop offset=".26" stop-color="#d9ad78"/>
+     <stop offset=".55" stop-color="#9b5f33"/><stop offset=".81" stop-color="#49291a"/>
+     <stop offset="1" stop-color="#170d0b"/>
+    </radialGradient>
+    <g id="canvas-rail">
+     <path d="M0 0H512L499 13H13Z" fill="url(#canvas-rail-bevel)"/>
+     <path d="M1 1H511L510 2H2ZM7 7H505L503 9H9Z" fill="url(#canvas-rail-reflection)"/>
+     <path d="M11 11H501L499 13H13Z" fill="#120c09"/>
+    </g>
+    <g id="canvas-corner-fastener">
+     <circle cx="9" cy="9" r="5.2" fill="#170e0a" stroke="#c79866" stroke-width=".7"/>
+     <circle cx="9" cy="9" r="3.9" fill="url(#canvas-fastener)"/>
+     <path d="m7.5 7.5 3 3" stroke="#3d2619" stroke-width=".85" stroke-linecap="round"/>
+     <path d="M6.9 7.2q.8-1 1.9-1.1" fill="none" stroke="#ffdfab" stroke-width=".65" stroke-linecap="round"/>
+    </g>
+   </defs>
+   <use href="#canvas-rail"/><use href="#canvas-rail" transform="rotate(180 256 256)"/>
+   <use href="#canvas-rail" transform="rotate(90 256 256)"/><use href="#canvas-rail" transform="rotate(-90 256 256)"/>
+   <use href="#canvas-corner-fastener"/><use href="#canvas-corner-fastener" x="494"/>
+   <use href="#canvas-corner-fastener" y="494"/><use href="#canvas-corner-fastener" x="494" y="494"/>
+  </svg>
+  <h1 class="artist-plaque" id="artist-plaque" hidden><span id="artist-name"></span></h1>
+ </div></section>
+<section class="player-slot" aria-label="Genuine official Bandcamp player"><iframe id="bandcamp" title="Official Bandcamp player" referrerpolicy="no-referrer"></iframe></section>
  <section class="launcher-stage" aria-label="Interactive independently layered launcher"><div class="launcher" aria-hidden="true"><img class="body" src="assets/browser/launcher-body.webp" alt=""><img class="elastic left" src="assets/browser/elastic.webp" alt=""><img class="elastic right" src="assets/browser/elastic.webp" alt=""><img class="cradle" src="assets/browser/cradle.webp" alt=""><img class="paintball" src="assets/browser/paintball.webp" alt=""></div></section>
- <nav class="glass-controls" aria-label="Painting controls"><div class="chain-dock"><div id="left-controls" class="left-controls"><button id="save" disabled><span class="glyph"></span><span>LOVE IT</span></button><div id="artist-custom-links" class="artist-custom-links"></div><a id="buy" hidden target="_blank" rel="noopener noreferrer"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h3l3 12h12l2-9H6M9 19a1 1 0 1 0 0 .1M19 19a1 1 0 1 0 0 .1"/></svg></span><span>BUY <br>THIS SONG</span></a><button id="next" hidden disabled><span class="glyph"></span><span>NEXT <br>SONG</span></button></div><button id="chain-motion" hidden type="button" aria-label="Pause moving buttons" aria-pressed="false"><span aria-hidden="true"></span></button></div><button id="replay" disabled><span class="glyph"></span><span>REPLAY</span></button><button id="share" disabled><span class="glyph"></span><span>SHARE<br>LINK</span></button></nav>
+ <nav class="glass-controls" aria-label="Painting controls"><div class="carousel-dock"><button class="carousel-arrow" id="cta-previous" type="button" aria-label="Scroll links left" aria-controls="left-controls" hidden></button><div id="left-controls" class="left-controls" aria-label="Artist links and painting actions" tabindex="0"><button id="save" disabled><span class="glyph"></span><span>LOVE IT</span></button><div id="artist-custom-links" class="artist-custom-links"></div><a id="buy" hidden target="_blank" rel="noopener noreferrer"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h3l3 12h12l2-9H6M9 19a1 1 0 1 0 0 .1M19 19a1 1 0 1 0 0 .1"/></svg></span><span>BUY <br>THIS SONG</span></a><button id="next" hidden disabled><span class="glyph"></span><span>NEXT <br>SONG</span></button></div><button class="carousel-arrow" id="cta-next" type="button" aria-label="Scroll links right" aria-controls="left-controls" hidden></button></div><button id="replay" disabled><span class="glyph"></span><span>REPLAY</span></button><button id="share" disabled><span class="glyph"></span><span>SHARE<br>LINK</span></button></nav>
  <aside id="visits-counter" aria-label="Public page visits"><span>VISITS</span><strong id="visits-total" aria-label="Visit count unavailable">---,---</strong></aside>
  <section id="completion-actions" hidden inert aria-label="Explore this music"><div class="completion-pair"><a id="buy-merch" hidden target="_blank" rel="noopener noreferrer">BUY MERCH</a></div></section><footer><a id="current-game" href="/">Created with sPlatters</a><details><summary>Credits</summary><div id="credits"></div></details></footer>
-</main><div id="error" role="alert" hidden></div><dialog id="share-dialog"><h2>Share sPlatters</h2><p id="share-note"></p><label for="share-url">Preview link</label><input id="share-url" readonly type="url"><p id="share-feedback" role="status"></p><button id="share-copy">Copy link</button><button id="share-close">Close</button></dialog><script type="module" src="c1.js?flow=direct152"></script><script type="module" src="c1-visits.js"></script></body></html>
+</main><div id="error" role="alert" hidden></div><dialog id="share-dialog"><h2>Share sPlatters</h2><p id="share-note"></p><label for="share-url">Preview link</label><input id="share-url" readonly type="url"><p id="share-feedback" role="status"></p><button id="share-copy">Copy link</button><button id="share-close">Close</button></dialog><script type="module" src="c1-v170.js"></script><script type="module" src="c1-visits.js"></script></body></html>
 
