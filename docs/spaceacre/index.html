@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-release="1"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a0c"><title>SpaceAcre on sPlatters</title><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="c1.css?flow=direct152"><link rel="stylesheet" href="c1-presentation-v171.css"><link rel="canonical" href="https://raggedya.github.io/splatters/spaceacre/">
+<html lang="en" data-release="1"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a0c"><title>SpaceAcre on sPlatters</title><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="c1.css?flow=direct152"><link rel="stylesheet" href="c1-presentation-v172.css"><link rel="canonical" href="https://raggedya.github.io/splatters/spaceacre/">
 <meta property="og:title" content="SpaceAcre on sPlatters">
 <meta property="og:description" content="Discover SpaceAcre on sPlatters — listen to the music and reveal the artwork.">
 <meta property="og:image" content="https://raggedya.github.io/splatters/spaceacre/social/preview-f38da1e47ad5eb0b8cbb3e7cd8cbcb241f7f67ada2f13775bbb1e6a5bc1c9182.png">
@@ -23,19 +23,19 @@
  <section class="artwork-stage" aria-label="Original artwork on physical canvas"><div class="canvas-object"><div class="canvas-back" aria-hidden="true"></div><div class="canvas-edge bottom" aria-hidden="true"></div><div class="canvas-edge side" aria-hidden="true"></div><canvas id="surface" aria-label="Artwork reveal"></canvas>
   <svg class="canvas-frame" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
    <defs>
-    <linearGradient id="canvas-rail-bevel" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="14.5">
-     <stop offset="0" stop-color="#1a100d"/><stop offset=".08" stop-color="#ad8057"/>
-     <stop offset=".16" stop-color="#73492d"/><stop offset=".25" stop-color="#1a1210"/>
-     <stop offset=".39" stop-color="#0d0b0b"/><stop offset=".50" stop-color="#3e281c"/>
-     <stop offset=".62" stop-color="#815537"/><stop offset=".73" stop-color="#e3b480"/>
-     <stop offset=".81" stop-color="#92603b"/><stop offset=".91" stop-color="#281911"/>
+    <linearGradient id="canvas-rail-bevel" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="12.5">
+     <stop offset="0" stop-color="#25130e"/><stop offset=".09" stop-color="#b98857"/>
+     <stop offset=".19" stop-color="#624026"/><stop offset=".31" stop-color="#100b0a"/>
+     <stop offset=".46" stop-color="#322017"/><stop offset=".57" stop-color="#9b5d35"/>
+     <stop offset=".69" stop-color="#e9b880"/><stop offset=".77" stop-color="#bd8250"/>
+     <stop offset=".88" stop-color="#54321f"/><stop offset=".96" stop-color="#1a100d"/>
      <stop offset="1" stop-color="#0c0908"/>
     </linearGradient>
     <linearGradient id="canvas-rail-reflection" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="512" y2="0">
-     <stop offset="0" stop-color="#f3ad67" stop-opacity=".38"/><stop offset=".11" stop-color="#c88d50" stop-opacity=".03"/>
-     <stop offset=".36" stop-color="#edc490" stop-opacity=".08"/><stop offset=".49" stop-color="#fff0d0" stop-opacity=".88"/>
-     <stop offset=".58" stop-color="#e6ad77" stop-opacity=".25"/><stop offset=".79" stop-color="#bb7946" stop-opacity=".04"/>
-     <stop offset="1" stop-color="#e9b479" stop-opacity=".48"/>
+     <stop offset="0" stop-color="#f3ad67" stop-opacity=".45"/><stop offset=".12" stop-color="#c88d50" stop-opacity=".08"/>
+     <stop offset=".36" stop-color="#edc490" stop-opacity=".11"/><stop offset=".5" stop-color="#fff0d0" stop-opacity=".88"/>
+     <stop offset=".62" stop-color="#e6ad77" stop-opacity=".22"/><stop offset=".82" stop-color="#bb7946" stop-opacity=".06"/>
+     <stop offset="1" stop-color="#e9b479" stop-opacity=".46"/>
     </linearGradient>
     <radialGradient id="canvas-fastener" cx=".36" cy=".28" r=".73">
      <stop offset="0" stop-color="#fff0c8"/><stop offset=".26" stop-color="#d9ad78"/>
@@ -43,23 +43,41 @@
      <stop offset="1" stop-color="#170d0b"/>
     </radialGradient>
     <g id="canvas-rail">
-     <path d="M0 0H512L497.5 14.5H14.5Z" fill="url(#canvas-rail-bevel)"/>
-     <path d="M1 1H511L510 2H2ZM8 8H504L501.5 10.5H10.5Z" fill="url(#canvas-rail-reflection)"/>
-     <path d="M12.5 12.5H499.5L497.5 14.5H14.5Z" fill="#120c09"/>
+     <path d="M0 0H512L499.5 12.5H12.5Z" fill="url(#canvas-rail-bevel)"/>
+     <path d="M1 1H511L510 2H2ZM7 7H505L503.3 8.7H8.7Z" fill="url(#canvas-rail-reflection)"/>
+     <path d="M11 11H501L499.5 12.5H12.5Z" fill="#120c09"/>
     </g>
     <g id="canvas-corner-fastener">
-     <circle cx="9" cy="9" r="5.2" fill="#170e0a" stroke="#c79866" stroke-width=".7"/>
-     <circle cx="9" cy="9" r="3.9" fill="url(#canvas-fastener)"/>
-     <path d="m7.5 7.5 3 3" stroke="#3d2619" stroke-width=".85" stroke-linecap="round"/>
-     <path d="M6.9 7.2q.8-1 1.9-1.1" fill="none" stroke="#ffdfab" stroke-width=".65" stroke-linecap="round"/>
+     <circle cx="8" cy="8" r="4.7" fill="#170e0a" stroke="#c79866" stroke-width=".65"/>
+     <circle cx="8" cy="8" r="3.6" fill="url(#canvas-fastener)"/>
+     <path d="m6.7 6.7 2.6 2.6" stroke="#3d2619" stroke-width=".8" stroke-linecap="round"/>
+     <path d="M6.2 6.4q.7-.9 1.7-1" fill="none" stroke="#ffdfab" stroke-width=".6" stroke-linecap="round"/>
     </g>
    </defs>
    <use href="#canvas-rail"/><use href="#canvas-rail" transform="rotate(180 256 256)"/>
    <use href="#canvas-rail" transform="rotate(90 256 256)"/><use href="#canvas-rail" transform="rotate(-90 256 256)"/>
-   <use href="#canvas-corner-fastener"/><use href="#canvas-corner-fastener" x="494"/>
-   <use href="#canvas-corner-fastener" y="494"/><use href="#canvas-corner-fastener" x="494" y="494"/>
+   <use href="#canvas-corner-fastener"/><use href="#canvas-corner-fastener" x="496"/>
+   <use href="#canvas-corner-fastener" y="496"/><use href="#canvas-corner-fastener" x="496" y="496"/>
   </svg>
-  <h1 class="artist-plaque" id="artist-plaque" hidden><span id="artist-name"></span></h1>
+  <h1 class="artist-plaque" id="artist-plaque" hidden>
+   <svg viewBox="0 0 360 44" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <defs>
+     <linearGradient id="plaque-face" x2="0" y2="1">
+      <stop stop-color="#533522"/><stop offset=".18" stop-color="#17100e"/><stop offset=".73" stop-color="#211611"/><stop offset="1" stop-color="#704829"/>
+     </linearGradient>
+     <linearGradient id="plaque-rim" x2="0" y2="1">
+      <stop stop-color="#e8bd87"/><stop offset=".29" stop-color="#795032"/><stop offset=".7" stop-color="#dca068"/><stop offset="1" stop-color="#57361f"/>
+     </linearGradient>
+     <radialGradient id="plaque-pin" cx=".36" cy=".27" r=".72">
+      <stop stop-color="#fff0c8"/><stop offset=".4" stop-color="#cf955e"/><stop offset="1" stop-color="#4c2a17"/>
+     </radialGradient>
+    </defs>
+    <path d="M1 31c19 0 25-10 32-17 6-6 11-8 20-8h254c9 0 14 2 20 8 7 7 13 17 32 17-21 0-25 2-33 7-5 3-10 4-18 4H52c-8 0-13-1-18-4-8-5-12-7-33-7Z" fill="url(#plaque-face)" stroke="url(#plaque-rim)" stroke-width="1.6"/>
+    <path d="M46 10h118m32 0h118M50 38h119m22 0h119M166 7l9-2 5-4 5 4 9 2m-25 33 7 1 4 2 4-2 7-1" fill="none" stroke="#e5ac70" stroke-width=".75" opacity=".72"/>
+    <g fill="url(#plaque-pin)" stroke="#57351e" stroke-width=".7"><circle cx="42" cy="25" r="4"/><circle cx="318" cy="25" r="4"/></g>
+   </svg>
+   <span id="artist-name"></span>
+  </h1>
  </div></section>
 <section class="player-slot" aria-label="Genuine official Bandcamp player"><iframe id="bandcamp" title="Official Bandcamp player" referrerpolicy="no-referrer"></iframe></section>
  <section class="launcher-stage" aria-label="Interactive independently layered launcher"><div class="launcher" aria-hidden="true"><img class="body" src="assets/browser/launcher-body.webp" alt=""><img class="elastic left" src="assets/browser/elastic.webp" alt=""><img class="elastic right" src="assets/browser/elastic.webp" alt=""><img class="cradle" src="assets/browser/cradle.webp" alt=""><img class="paintball" src="assets/browser/paintball.webp" alt=""></div></section>
