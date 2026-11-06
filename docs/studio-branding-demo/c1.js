@@ -8,7 +8,7 @@ import {activity,initialiseAnalytics,eventUUID} from './c1-analytics.js';
 import {manualEmbed} from './c1-manual-player.js';
 import {CompletionUI} from './c1-completion.js';
 import {coveredArtwork,CANVAS_ASPECT} from './c1-artwork.js';
-import {FirstPlaySequence} from './c1-onboarding.js';
+import {FirstPlaySequence} from './c1-onboarding.js?flow=direct152';
 import {shareDetails,offerShare} from './c1-share.js';
 import {SongPurchase} from './c1-purchase.js';
 import {installLauncherInput} from './c1-input.js';
@@ -71,7 +71,11 @@ function onHit(e){
  impact={u:e.u,v:e.v,fieldX:e.u*field.w,fieldY:e.v*field.h,point:e.point,id:e.id};impactAt=session.clock;makeBurst(e);
  renderPaint();message('Canvas hit. Pull the next ball to aim again.');
 }
-function draw(){if(!geometry||!session||selecting)return;const counted=reportedLaunches.get(session)||0;for(const e of session.events.filter(e=>e.type==='launch'&&!e.automatic&&e.id>counted)){activity('paintball_launch',sessionSongId,paintingIds.get(session));reportedLaunches.set(session,e.id);}
+function draw(){if(!geometry||!session||selecting)return;const counted=reportedLaunches.get(session)||0;for(const e of session.events.filter(e=>e.type==='launch'&&!e.automatic&&e.id>counted)){if(!paintingIds.has(session)){
+  paintingIds.set(session,eventUUID());
+  // The reporting protocol uses this event for a painting session's first action.
+  activity('start_painting_click',sessionSongId,paintingIds.get(session));
+ }activity('paintball_launch',sessionSongId,paintingIds.get(session));reportedLaunches.set(session,e.id);}
  if(!session.ball&&session.phase!=='dragging'){if(reveal.complete)session.phase='complete';else if(paint.complete)session.phase='ready';else if(paint.launches>=13)session.phase='settling';}
  const destination=purchase.update(session.launches);$('buy').hidden=!destination||!!navigation?.duplicates(destination);if(destination)$('buy').href=destination;else $('buy').removeAttribute('href');refreshRail();
  const offset=session.recoil(reduced.matches),f=geometry.launcher.factor,ox=offset.x/f,oy=offset.y/f;
@@ -86,11 +90,11 @@ function draw(){if(!geometry||!session||selecting)return;const counted=reportedL
   previousProjection=p;
  }else{projectile.hidden=trail.hidden=true;previousProjection=null;}
  if(session.manual)onboarding.launchedManually();
- const cue=onboarding.stage==='play'&&playerReady?'play':onboarding.stage==='start'?'start':
+ else if(session.phase==='dragging')onboarding.interact();
+ const cue=onboarding.stage==='play'&&playerReady?'play':
   onboarding.stage==='launcher'&&session.tutorial&&session.phase==='ready'?'drag':'';
  let x=geometry.ready.x-11,y=geometry.ready.y-9;
- if(cue==='play'){const r=frame.getBoundingClientRect();x=Math.min(r.left+32,$('start').getBoundingClientRect().left-34);y=r.bottom+2;}
- if(cue==='start'){const r=$('start').getBoundingClientRect();x=r.left-37;y=r.top+(r.height-36)/2;}
+ if(cue==='play'){const r=frame.getBoundingClientRect();x=r.left+49;y=r.bottom+1;}
  updateCue(cue,x,y);
  if(session.clock-impactAt>.65)marker.hidden=true;
 }
@@ -98,7 +102,7 @@ function loop(now){raf=0;if(disposed||document.hidden)return;const dt=last?Math.
 function wake(){if(!raf&&!disposed&&!document.hidden){last=0;raf=requestAnimationFrame(loop);}}
 async function select(next,replay=false,preservePurchase=replay){
  if(selecting)return;selecting=true;$('error').hidden=true;const version=++token;++renderId;
- for(const id of ['next','replay','start','save'])$(id).disabled=true;grab.disabled=true;
+ for(const id of ['next','replay','save'])$(id).disabled=true;grab.disabled=true;
  if(session&&!archivedSessions.has(session)){transitionLog.push(...session.events.map(e=>({...e,songId:sessionSongId})));archivedSessions.add(session);}
  if(!replay){if(session)transitionLog.push({type:'next',songId:sessionSongId,nextSongId:entries[next].id});frame?.remove();frame=null;playerReady=false;}
  if(transitionLog.length>500)transitionLog.splice(0,transitionLog.length-500);
@@ -114,28 +118,25 @@ async function select(next,replay=false,preservePurchase=replay){
  paint=new CinematicPaint(field);revealLayers=[{field,paint}];
  const playerLoaded=(!replay||!frame)?createManualPlayer(entry,version):Promise.resolve();
  coverage=0;session=null;measure();session=new LauncherSession(geometry,onHit);sessionSongId=entry.id;impact=null;marker.hidden=true;lastForecast=forecast=null;scene.classList.remove('complete');
- $('start').hidden=false;$('start').style.opacity='1';$('start').disabled=true;
  updateLove(progress.favourite(entry));$('save').setAttribute('aria-pressed',progress.favourite(entry));icon($('save').querySelector('.glyph'),'heart',progress.favourite(entry));$('current-game').href=published?config.publicUrl:'/?edition=enhanced&band='+encodeURIComponent(config.bandId)+'&snapshot='+snapshot;
  $('credits').textContent='Artwork: '+(entry.artwork.credit||'owner-supplied artwork')+'. '+entry.audio.attribution+'. '+entry.audio.license+'. C1 physical collision study. Music playback is independent.';
  await playerLoaded;if(version!==token||disposed)return;
- $('start').disabled=false;
- if(!playerReady)onboarding.confirmMusic();
- message(onboarding.stage==='play'?'Press Play to hear the song, then select LET’S PAINT.':'Select LET’S PAINT when you’re ready.');
+ session.start();
+ if(!playerReady)onboarding.interact();
+ message(onboarding.stage==='play'?'Press Play to hear the song.':'Pull back the paintball and release to paint.');
  return true;
  }finally{if(version===token){selecting=false;for(const id of ['next','replay','save'])$(id).disabled=false;draw();}}
 }
 // Bandcamp does not expose playback state to this cross-origin page.
 function guideAfterPlayerInteraction(){
  if(!playerReady||disposed||onboarding.stage!=='play')return;
- onboarding.confirmMusic();
- message('Select LET’S PAINT when you’re ready.');
+ onboarding.interact();
+ message('Pull back the paintball and release to paint.');
  draw();
 }
 on(window,'blur',()=>setTimeout(()=>{
  if(frame&&document.activeElement===frame)guideAfterPlayerInteraction();
 },0));
-on($('start'),'focus',()=>{if(onboarding.stage==='play'){onboarding.confirmMusic();draw();}});
-on($('start'),'click',()=>{if(onboarding.stage==='play')onboarding.confirmMusic();if(onboarding.start()&&session?.start()){paintingIds.set(session,eventUUID());activity('start_painting_click',sessionSongId,paintingIds.get(session));const version=token;$('start').disabled=true;updateCue('',0,0);completion.fade($('start'),1,0,180).then(()=>{if(version===token)$('start').hidden=true;});message('Pull back the paintball and release to paint.');wake();}});
 installLauncherInput({region:document.querySelector('.launcher-stage'),grab,session:()=>session,geometry:()=>geometry,draw,wake,message,signal:abort.signal});
 on(grab,'keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' ','Enter','Escape'].includes(e.key)||!['ready','dragging'].includes(session.phase))return;e.preventDefault();if(e.key==='Escape'){session.cancel();draw();return;}if(session.pointer===null)session.begin('keyboard',0,0,geometry.maxPullY);if(e.key===' '||e.key==='Enter'){if(Math.hypot(session.pull.x,session.pull.y)<8)session.move('keyboard',0,geometry.maxPullY*.60);session.release('keyboard');wake();}else session.move('keyboard',session.pull.x+(e.key==='ArrowLeft'?-10:e.key==='ArrowRight'?10:0),session.pull.y+(e.key==='ArrowDown'?10:e.key==='ArrowUp'?-10:0));draw();});
 on($('buy-merch'),'click',()=>activity('merch_click',sessionSongId));

@@ -162,14 +162,3 @@ footer>a{font-size:7px}
  background:currentColor;
  clip-path:polygon(0 0,100% 50%,0 100%);
 }
-
-/* Original master playback and painting control. */
-.action-slot{position:absolute;top:calc(var(--art-top) + var(--art-size) + 100px);left:18%;width:66%;height:44px}
-.action-slot button{min-height:40px;padding:0 20px;border-color:#d7bc74;color:#f7e9b9;background:linear-gradient(140deg,#3a3021,#141414);font-size:15px;box-shadow:inset 0 1px 1px #ffecb550,0 4px 10px #0006}
-.first-play-cue[data-cue=start] svg{transform:rotate(90deg)}
-.first-play-cue[data-cue=start]{animation:c1-point-right 1.5s ease-in-out infinite}
-@keyframes c1-point-right{0%,100%{transform:translateX(-2px);opacity:.7}50%{transform:translateX(2px);opacity:1}}
-#start:not([hidden]){animation:c16-start-in .3s ease-out}
-@keyframes c16-start-in{from{opacity:0}to{opacity:1}}
-@media(min-width:600px){.action-slot{top:calc(var(--art-top) + var(--art-size) + 124px)}}
-@media(max-height:700px){.action-slot{top:calc(var(--art-top) + var(--art-size) + 90px)}.action-slot button{min-height:36px}}
