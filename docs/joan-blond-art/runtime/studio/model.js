@@ -2,7 +2,7 @@ import {validateEmbed} from '../feasibility/bandcamp/embed.js';
 export const SCHEMA_VERSION=1,PACKAGE_SLOTS=10,ARTWORK_LIMIT=10;
 export const DEFAULT_ART_EMAIL='andrewharris501@gmail.com',ART_INFORMATION_LIMIT=6000;
 export function enquiryEmail(value){return typeof value==='string'&&value.length<=254&&/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/.test(value)?value:null;}
-export const ARTIST_LINK_LIMIT=6,ARTIST_LINK_TITLE_LIMIT=40;
+export const ARTIST_LINK_LIMIT=10,ARTIST_LINK_TITLE_LIMIT=40;
 export const URL_PREVIEW_WIDTH=1200,URL_PREVIEW_HEIGHT=630,URL_PREVIEW_MAX_BYTES=5*1024*1024,URL_PREVIEW_MAX_PIXELS=32000000;
 export const BRANDING_MODES=Object.freeze(['studio','abstract','background','logo']);
 export const SOURCES=['local-audio','bandcamp-embed','outbound'];
@@ -36,9 +36,10 @@ export function editableArtistLinks(artist){
 }
 export function externalLinkKey(value){const safe=commerceURL(value);if(!safe)return null;const u=new URL(safe);u.hash='';u.pathname=u.pathname.replace(/\/+$/,'')||'/';if(bandcamp(safe))u.search='';else u.searchParams.sort();return u.href;}
 export function publishedArtistLinks(artist){
- const seen=new Set();return editableArtistLinks(artist).slice(0,ARTIST_LINK_LIMIT).filter(link=>link&&typeof link==='object').sort((a,b)=>a.order-b.order).flatMap(link=>{
-  if(typeof link?.title!=='string'||!link.title.trim()||link.title.length>ARTIST_LINK_TITLE_LIMIT||!commerceURL(link.url))return[];
-  const key=externalLinkKey(link.url);if(seen.has(key))return[];seen.add(key);return[{id:link.id,title:link.title.trim(),url:commerceURL(link.url),order:link.order}];
+ return editableArtistLinks(artist).slice(0,ARTIST_LINK_LIMIT).filter(link=>link&&typeof link==='object').sort((a,b)=>a.order-b.order).flatMap(link=>{
+  if(typeof link.title!=='string'||!link.title.trim()||link.title.length>ARTIST_LINK_TITLE_LIMIT)return[];
+  const url=commerceURL(link.url);
+  return url?[{id:link.id,title:link.title.trim(),url,order:link.order}]:[];
  });
 }
 export function assetReference(value,bandId){return typeof value==='string'&&(/^(\.\/)?assets\/(cipher\.mp3|carefree\.mp3|rehearsal\.png|rehearsal-two\.jpg)$/.test(value)||new RegExp('^\\./studio-assets/'+bandId+'/(original|processed|audio|url-preview|branding)/[a-f0-9]{64}\\.(png|jpg|webp|heic|heif|mp3|wav|ogg|m4a)$').test(value));}

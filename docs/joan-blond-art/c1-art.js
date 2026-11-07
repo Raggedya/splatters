@@ -23,6 +23,7 @@ export class ArtworkEnquiry{
   const artistLine=document.createElement('p');artistLine.className='art-card-artist';
   const information=document.createElement('p');information.className='art-card-information';
   const send=document.createElement('a');send.className='art-send';send.textContent='SEND ENQUIRY';
+  send.target='_blank';send.rel='noopener noreferrer';
   const note=document.createElement('p');note.className='art-mail-note';note.textContent='Your email app opens a draft for you to review and send.';
   send.hidden=note.hidden=!settings.enquiries;
   const close=document.createElement('button');close.type='button';close.textContent='Close';close.className='art-close';

@@ -167,7 +167,9 @@ export function installControlCarousel(rail,strip,previous,next,reduced,signal){
   if(!tile)return;
   if(dragged&&event.detail>0){event.preventDefault();event.stopImmediatePropagation();return;}
   const real=copies.get(tile);
-  if(real){
+  // Links use the browser's native activation on both strips. Only mirrored
+  // in-gallery buttons need to invoke the original button's handler.
+  if(real?.localName==='button'){
    event.preventDefault();
    event.stopImmediatePropagation();
    real.click();

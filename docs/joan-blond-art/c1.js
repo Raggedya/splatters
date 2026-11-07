@@ -201,8 +201,14 @@ on(window,'blur',()=>setTimeout(()=>{
 installLauncherInput({region:document.querySelector('.launcher-stage'),grab,session:()=>session,geometry:()=>geometry,draw,wake,message,signal:abort.signal});
 on(grab,'keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' ','Enter','Escape'].includes(e.key)||!['ready','dragging'].includes(session.phase))return;e.preventDefault();if(e.key==='Escape'){session.cancel();draw();return;}if(session.pointer===null&&session.begin('keyboard',0,0,geometry.maxPullY)&&reveal.awaitingNextImpact)handoffCueDismissed=true;if(e.key===' '||e.key==='Enter'){if(Math.hypot(session.pull.x,session.pull.y)<8)session.move('keyboard',0,geometry.maxPullY*.60);session.release('keyboard');wake();}else session.move('keyboard',session.pull.x+(e.key==='ArrowLeft'?-10:e.key==='ArrowRight'?10:0),session.pull.y+(e.key==='ArrowDown'?10:e.key==='ArrowUp'?-10:0));draw();});
 on($('buy-merch'),'click',()=>activity('merch_click',sessionSongId));
-on($('artist-custom-links'),'click',e=>{const link=e.target.closest('a[data-artist-link]');if(!link)return;if(link.dataset.artistLink==='link-legacy-promotion')activity('merch_click',sessionSongId);else if(new URL(link.href).hostname.endsWith('.bandcamp.com'))activity('bandcamp_visit_click',sessionSongId);});
-on($('buy'),'click',()=>activity('buy_click',sessionSongId));
+$('buy').dataset.cta='song-purchase';
+on(scene,'click',e=>{
+ const link=e.target.closest('a[href]');
+ if(!link)return;
+ if(link.dataset.cta==='song-purchase')activity('buy_click',sessionSongId);
+ else if(link.dataset.artistLink==='link-legacy-promotion')activity('merch_click',sessionSongId);
+ else if(link.dataset.artistLink&&new URL(link.href).hostname.endsWith('.bandcamp.com'))activity('bandcamp_visit_click',sessionSongId);
+});
 on($('replay'),'click',()=>{if(!entries?.length||selecting)return;activity('replay_click',sessionSongId);select(index,true).catch(fail);});on($('next'),'click',()=>{if(!entries?.length||selecting)return;const exiting=sessionSongId;(()=>{const next=nextSongIndex(entries,index);return next===null?Promise.resolve(false):select(next,false,false);})().then(selected=>{if(selected)activity('next_click',exiting);}).catch(fail);});
 on($('save'),'click',()=>{const saved=progress.toggleFavourite(entries[index]);activity(saved.value?'love_add':'love_remove',sessionSongId);$('save').setAttribute('aria-pressed',saved.value);icon($('save').querySelector('.glyph'),'heart',saved.value);updateLove(saved.value);message(saved.value?'Loved — added to favourites on this device.':'Removed from favourites.');});
 const shareDialog=$('share-dialog'),shareURL=$('share-url'),shareFeedback=$('share-feedback');
