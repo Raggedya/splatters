@@ -12,7 +12,7 @@
 .first-play-cue path{fill:#fff9e8;stroke:#ad8234;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 .first-play-cue .touch-ring{fill:none;stroke:#e8c982;stroke-width:1.5;opacity:.8}
 .first-play-cue[data-cue=drag]{animation:c1-pull 2.8s ease-in-out infinite}
-@keyframes c1-pull{0%,12%{transform:translateY(0);opacity:.9}55%{transform:translateY(48px);opacity:1}65%{transform:translateY(0);opacity:.7}80%,100%{transform:translateY(0);opacity:0}}
+@keyframes c1-pull{0%,15%,100%{transform:translateY(0)}55%,68%{transform:translateY(48px)}}
 @media(prefers-reduced-motion:reduce){.first-play-cue{animation:none!important}.c1-trail{display:none}}
 
 /* C1.1: stable page, but gesture ownership stays inside the launcher region. */
@@ -29,15 +29,12 @@ html,body{position:fixed;inset:0;overflow:hidden;overscroll-behavior:none}
 /* C1.3: reversible projection adjustment; approved raster layers stay intact. */
 .artwork-stage{perspective:1500px;perspective-origin:50% 82%;padding-bottom:8px}
 .canvas-object{transform:rotateX(8deg) rotateY(-3deg) rotateZ(.3deg)}
-.action-slot{gap:8px}
 #buy{min-height:44px;padding:0 17px;border:1px solid #c6a35b80;border-radius:22px;background:linear-gradient(150deg,#6f552a68,#211b13d9);color:#e9ca86;font:600 10px/1.2 system-ui,sans-serif;letter-spacing:1px;box-shadow:inset 0 1px 0 #ffe6ad22,0 3px 10px #0004;touch-action:manipulation;white-space:nowrap}
 #buy:focus-visible{outline:2px solid #f7da99;outline-offset:2px}
-.action-slot:has(#buy:not([hidden])) #start{font-size:14px;padding-inline:14px}
 
 /* C1.4 temporary guidance and share fallback only; composition is unchanged. */
-.first-play-cue[data-cue=play],.first-play-cue[data-cue=start]{animation:c1-point 1.5s ease-in-out infinite}
+.first-play-cue[data-cue=play]{animation:c1-point 1.5s ease-in-out infinite}
 @keyframes c1-point{0%,100%{transform:translateY(3px);opacity:.65}50%{transform:translateY(-3px);opacity:1}}
-#music-confirm{font-size:15px}
 #share-dialog{width:min(90vw,420px);border:1px solid #d3b47780;border-radius:18px;background:#191917;color:#f7efd9;padding:22px;font:14px/1.5 system-ui;z-index:30}
 #share-dialog::backdrop{background:#0009}
 #share-dialog h2{font-size:18px;margin:0 0 12px}
@@ -48,6 +45,3 @@ html,body{position:fixed;inset:0;overflow:hidden;overscroll-behavior:none}
 .scene .environment{opacity:1}
 .scene.complete .atmosphere{display:block}
 .scene.complete .launcher{visibility:visible}
-#music-confirm{min-width:44px;padding:0 16px;font-size:24px}
-#start:not([hidden]) .paint-label{display:inline-block;animation:c15-label .28s ease-out both}
-@keyframes c15-label{from{opacity:0}to{opacity:1}}

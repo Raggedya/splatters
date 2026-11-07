@@ -34,6 +34,6 @@ export function renderArtistNavigation(container,links){
  const fragment=document.createDocumentFragment();
  for(const link of links){const a=document.createElement('a');a.className='artist-link';a.dataset.artistLink=link.id;a.href=link.url;a.target='_blank';a.rel='noopener noreferrer';a.title=link.title;a.setAttribute('aria-label',link.title);
   const glyph=artistLinkGlyph(link);
-  const label=document.createElement('span');label.className='artist-link-label';label.textContent=link.title;if(!/\s/.test(link.title))label.classList.add('single-word');a.append(glyph,label);fragment.append(a);
+  const label=document.createElement('span');label.className='artist-link-label';label.textContent=link.title;if(!/\s/.test(link.title))label.classList.add('single-word');a.classList.toggle('long-label',link.title.length>22);a.append(glyph,label);fragment.append(a);
  }container.replaceChildren(fragment);
 }
