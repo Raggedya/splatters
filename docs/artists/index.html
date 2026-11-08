@@ -1,0 +1,124 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="ATELIER Artist Directory"><title>ATELIER</title><style>
+:root{color-scheme:dark;background:#080b11;color:#eed09a;font-family:Georgia,"Times New Roman",serif}
+*{box-sizing:border-box}body{margin:0;min-width:0}
+main{--room-height:max(100svh,min(216vw,1050px));position:relative;isolation:isolate;max-width:76rem;margin:auto;min-height:100vh;padding:clamp(43px,11vw,116px) clamp(13px,5.2vw,65px) clamp(75px,15vw,158px);background:linear-gradient(90deg,#07090d,#101620 22%,#0b1018 50%,#101620 78%,#07090d)}
+main::before,main::after{content:"";position:absolute;z-index:-1;inset-inline:0;pointer-events:none}
+main::before{top:0;height:calc(var(--room-height) * .58);background:url('atelier-room.webp') center top/auto var(--room-height) no-repeat;mask-image:linear-gradient(#000 62%,transparent)}
+main::after{bottom:0;height:calc(var(--room-height) * .46);background:url('atelier-room.webp') center bottom/auto var(--room-height) no-repeat;mask-image:linear-gradient(transparent,#000 22%)}
+main:has(#creators>li:nth-child(4)){padding-bottom:calc(var(--room-height) * .42)}
+main:not(:has(#creators>li:nth-child(4)))::before{height:100%;background-size:cover;background-position:center;mask-image:none}
+main:not(:has(#creators>li:nth-child(4)))::after{display:none}
+@media(max-width:959px){
+ #creators{margin-inline:clamp(-8px,-.85vw,-2px)}
+}
+@media(min-aspect-ratio:3/4){
+ main::before,main::after{width:calc(var(--room-height) * .462);margin-inline:auto;mask-composite:intersect}
+ main::before{mask-image:linear-gradient(#000 62%,transparent),linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+ main::after{mask-image:linear-gradient(transparent,#000 22%),linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+ main:not(:has(#creators>li:nth-child(4)))::before{background-size:auto 100%;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+}
+header{margin:0 auto clamp(8px,2.7vw,28px);max-width:47rem;text-align:center}
+.brand{position:relative;isolation:isolate;container-type:inline-size;aspect-ratio:3.45;width:72%;margin:auto;display:flex;align-items:center;justify-content:center;color:#f7dba0}
+.brand svg{position:absolute;inset:0;width:100%;height:100%;z-index:-1;filter:drop-shadow(0 3px 3px #090503d9) drop-shadow(0 0 4px #cc813e66)}
+h1{margin:0;font-weight:500;font-size:clamp(1.5rem,10vw,5.35rem);font-size:clamp(1.5rem,15.35cqi,5.35rem);letter-spacing:.067em;line-height:1.12;filter:drop-shadow(0 1px #5c351b) drop-shadow(0 2px 1px #080403)}
+@supports(background-clip:text){h1{background:linear-gradient(#b77a43 9%,#ffedc3 31%,#efc287 55%,#ba793c 72%,#f6ce91 87%);background-clip:text;color:transparent}}
+.gallery-shuffle{min-height:44px;min-width:44px;margin:-5px auto 0;padding:0;border:0;background:none;vertical-align:top;color:#ebcd99;font:500 clamp(.5rem,2vw,.53rem)/1 Georgia,serif;letter-spacing:.055em;cursor:pointer}
+.gallery-shuffle:not([hidden]),.gallery-shuffle span{display:inline-grid;place-items:center}
+.gallery-shuffle span{width:clamp(42px,10.8vw,54px);height:22px;border:1px solid #b78a57;border-radius:5px;background:linear-gradient(#35261d,#161114 49%,#241a16);box-shadow:inset 0 1px 1px #e8bb8038,0 2px 5px #0008}
+.gallery-shuffle:focus-visible{outline:none}
+.gallery-shuffle:focus-visible span{outline:2px solid #ffe5b0;outline-offset:2px}
+.discovery-invitation{margin:0;color:#d8bd95;font:italic clamp(.68rem,2.85vw,.86rem)/1.2 Georgia,serif;text-align:center}
+.empty{margin:2rem auto;color:#e3cba3;font:clamp(.68rem,2vw,.85rem)/1.4 system-ui,sans-serif;text-align:center}
+ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,3.6vw,32px) clamp(8px,2.65vw,26px)}
+li{min-width:0}a{display:flex;flex-direction:column;height:100%;color:inherit;text-decoration:none}a:focus-visible{outline:2px solid #ffe5b0;outline-offset:4px}
+.artwork{--inset:clamp(5px,1.25vw,9px);position:relative;aspect-ratio:1;flex:none;border:1px solid #c79459;border-radius:4px;
+ background:linear-gradient(90deg,#895434,#cb945c 27%,#ffdda4 50%,#c68d51 74%,#82502c) center top/100% 2px no-repeat,
+ linear-gradient(0deg,#d19d68,#724124 46%,#d8a16c) center bottom/100% 3px no-repeat,
+ linear-gradient(90deg,#d7a26d,#593621 3%,#b97e4c 6%,#7d4e2d 94%,#4b2816 97%,#c69055);
+ box-shadow:0 0 0 1px #29180e,0 2px 3px #080402,0 7px 12px #0009,0 -2px 5px #c285402c,inset 0 0 0 1px #f5cc8e48}
+.artwork::before{content:"";position:absolute;inset:calc(var(--inset) - 1px);border:1px solid #21130d;box-shadow:0 1px #e2ad6c90,0 0 0 1px #533420}
+.artwork::after{--pin:radial-gradient(circle at 36% 31%,#fff2c7 0%,#dca86b 29%,#8f562c 48%,#4a2818 61%,transparent 72%);content:"";position:absolute;inset:0;pointer-events:none;
+ background:var(--pin) left top/7px 7px no-repeat,var(--pin) right top/7px 7px no-repeat,var(--pin) left bottom/7px 7px no-repeat,var(--pin) right bottom/7px 7px no-repeat}
+.artwork img{position:absolute;inset:var(--inset);width:calc(100% - 2 * var(--inset));height:calc(100% - 2 * var(--inset));object-fit:contain;background:#25262a;border:1px solid #211713}
+.nameplate{position:relative;display:grid;place-items:center;flex:1;min-height:clamp(23px,6vw,45px);margin:clamp(4px,1vw,9px) 3% 0;padding:3px 8%;border:1px solid #c99964;border-radius:1.6rem;background:radial-gradient(ellipse at 50% 0,#73503355,transparent 70%),linear-gradient(#362419,#130e0e 48%,#291b14 86%,#442919);box-shadow:0 3px 5px #000b,inset 0 0 0 1px #502f1b,inset 0 1px 1px #efc58b83,inset 0 -1px 1px #d1955549;text-align:center;overflow-wrap:anywhere;text-transform:uppercase;color:#f2d5a4;font:500 clamp(.56rem,2.35vw,1.15rem)/1.15 Georgia,serif;text-shadow:0 1px #090503}
+.nameplate::before,.nameplate::after{content:"";position:absolute;top:50%;width:clamp(3px,.8vw,6px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 29%,#fff3c8,#bb834e 44%,#4a2916 72%);box-shadow:0 1px 1px #070402;transform:translateY(-50%)}
+.nameplate::before{left:3%}.nameplate::after{right:3%}
+@media(min-width:960px){ul{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:290px){ul{gap:10px 7px}.brand{width:79%}}
+</style></head><body><main><header><div class="brand"><svg viewBox="0 0 640 142" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><path id="brand-outline" d="M8 71Q32 65 48 49L71 39Q86 32 94 19Q105 7 127 7H513Q535 7 546 19Q554 32 569 39L592 49Q608 65 632 71Q608 77 592 93L569 103Q554 110 546 123Q535 135 513 135H127Q105 135 94 123Q86 110 71 103L48 93Q32 77 8 71Z"/><linearGradient id="brand-face" x2="0" y2="1"><stop stop-color="#583821"/><stop offset=".15" stop-color="#302015"/><stop offset=".45" stop-color="#17100d"/><stop offset=".78" stop-color="#100c0b"/><stop offset="1" stop-color="#392519"/></linearGradient><linearGradient id="brand-edge" x2="0" y2="1"><stop stop-color="#ffe0a3"/><stop offset=".12" stop-color="#b77945"/><stop offset=".49" stop-color="#e8b47b"/><stop offset=".55" stop-color="#8f542d"/><stop offset=".86" stop-color="#ae7546"/><stop offset="1" stop-color="#f0bf81"/></linearGradient><linearGradient id="brand-polish"><stop stop-color="#ecb16b" stop-opacity="0"/><stop offset=".36" stop-color="#ecb16b" stop-opacity=".12"/><stop offset=".5" stop-color="#fff1c1"/><stop offset=".64" stop-color="#ecb16b" stop-opacity=".12"/><stop offset="1" stop-color="#ecb16b" stop-opacity="0"/></linearGradient><radialGradient id="brand-light"><stop stop-color="#d49248" stop-opacity=".25"/><stop offset="1" stop-color="#a75c27" stop-opacity="0"/></radialGradient></defs><use href="#brand-outline" fill="#140c08" stroke="#4b2a16" stroke-width="8"/><use href="#brand-outline" fill="url(#brand-face)" stroke="url(#brand-edge)" stroke-width="3.5"/><ellipse cx="320" cy="16" rx="176" ry="35" fill="url(#brand-light)"/><path d="M127 7H513" stroke="url(#brand-polish)" stroke-width="3"/><use href="#brand-outline" transform="translate(8 6) scale(.975 .915)" fill="none" stroke="#f0c082" stroke-opacity=".17" stroke-width="1.5"/><path d="M127 132H513" stroke="url(#brand-polish)" stroke-opacity=".42" stroke-width="2"/><path id="brand-diamond" d="m61 71 8-6 8 6-8 6zM42 71h18m19 0h2" fill="none" stroke="#d5a16a" stroke-width="2"/><use href="#brand-diamond" transform="translate(640) scale(-1 1)"/><path d="m69 68 4 3-4 3-4-3zm502 0 4 3-4 3-4-3z" fill="#f4cd90"/></svg><h1>ATELIER</h1></div><button class="gallery-shuffle" type="button" hidden aria-controls="creators"><span>SHUFFLE</span></button><p class="discovery-invitation">Go exploring…</p></header><ul id="creators"><li><a href="../elise-judd-art/"><div class="artwork"><img src="thumbnails/gallery-thumbnail-c869b71caf3ab83d99961f0e9e62670f9d993ac645853c60f5527778bca9c3e3.webp" alt="" width="480" height="480" decoding="async"></div><span class="nameplate">Elise Judd Art</span></a></li><li><a href="../joan-blond-art/"><div class="artwork"><img src="thumbnails/gallery-thumbnail-9a750512f0f32e95caaf1f4b9009ff5f806b89207cef570d5414e8d926ac64da.webp" alt="" width="480" height="480" decoding="async"></div><span class="nameplate">JOAN BLOND ART</span></a></li><li><a href="../robbie-gard-art/"><div class="artwork"><img src="thumbnails/gallery-thumbnail-7f629e247e5a1761aba6a65eb1b994b2fe48e3e737046a828c6428e5f80032d7.webp" alt="" width="480" height="480" decoding="async"></div><span class="nameplate">ROBBIE GARD ART</span></a></li></ul></main><script>(() => {
+ const grid=document.getElementById('creators');
+ const shuffle=document.querySelector('.gallery-shuffle');
+ const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+ const limit=24;
+ let activeMotion=null;
+ let tiles=[...grid.children];
+
+ function updateShuffle(){
+  shuffle.setAttribute('aria-disabled',String(tiles.length<2||activeMotion!==null));
+ }
+
+ function stopMotion(){
+  const motion=activeMotion;
+  activeMotion=null;
+  for(const animation of motion||[])animation.cancel();
+  grid.inert=false;
+  updateShuffle();
+ }
+
+ function reordered(tiles){
+  const result=[...tiles];
+  for(let i=result.length-1;i>0;i--){
+   const j=Math.floor(Math.random()*(i+1));
+   [result[i],result[j]]=[result[j],result[i]];
+  }
+  if(result.length>1&&result.every((tile,index)=>tile===tiles[index])){
+   result.push(result.shift());
+  }
+  return result;
+ }
+
+ shuffle.addEventListener('click',()=>{
+  if(tiles.length<2||activeMotion)return;
+  const animate=!reducedMotion.matches&&typeof grid.animate==='function';
+  const before=new Map(animate?tiles.map(tile=>[tile,tile.getBoundingClientRect()]):[]);
+  const onScreen=animate&&tiles.length>limit?tiles.filter(tile=>{
+   const rect=before.get(tile);
+   return rect.bottom>0&&rect.top<innerHeight;
+  }):[];
+  let next;
+  if(onScreen.length>1){
+   // Keep the visible frames within their current screenful while shuffling the rest independently.
+   const onScreenSet=new Set(onScreen);
+   const near=reordered(onScreen).values();
+   const far=reordered(tiles.filter(tile=>!onScreenSet.has(tile))).values();
+   next=tiles.map(tile=>(onScreenSet.has(tile)?near:far).next().value);
+  }else next=reordered(tiles);
+  grid.append(...next);
+  tiles=next;
+  if(!animate)return;
+
+  const moves=[];
+  for(const tile of tiles){
+   const old=before.get(tile),current=tile.getBoundingClientRect();
+   if((old.bottom<=0&&current.bottom<=0)||(old.top>=innerHeight&&current.top>=innerHeight))continue;
+   const x=old.left-current.left,y=old.top-current.top;
+   if((x||y)&&Math.abs(y)<innerHeight)moves.push({tile,x,y});
+   if(moves.length===limit)break;
+  }
+  if(!moves.length)return;
+  grid.inert=true;
+  const motion=moves.map(({tile,x,y})=>tile.animate([
+   {transform:'translate('+x+'px,'+y+'px)'},{transform:'translate(0,0)'}
+  ],{duration:900,easing:'cubic-bezier(.42,0,.28,1)'}));
+  activeMotion=motion;
+  updateShuffle();
+  Promise.allSettled(motion.map(animation=>animation.finished)).then(()=>{
+   if(activeMotion===motion)stopMotion();
+  });
+ });
+
+ reducedMotion.addEventListener('change',event=>{if(event.matches&&activeMotion)stopMotion();});
+ updateShuffle();
+ shuffle.hidden=false;
+})();
+</script></body></html>
