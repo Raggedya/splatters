@@ -1,22 +1,15 @@
-import {commerceURL,enquiryEmail,publishedArtistLinks} from './runtime/studio/model.js';
+import {artworkActionURL,artworkPurchaseListing,commerceURL,enquiryEmail,verifiedArtworkPurchase} from './runtime/studio/model.js';
+import {artistLinkIcon,makeArtistLinkGlyph} from './runtime/studio/artist-link-icons.js';
 import {artworkPlaqueDetails} from './c1-artwork-details.js';
 
-export function artworkPlaqueLink(artwork,links){
- const url=commerceURL(artwork.sourceUrl);
- if(url){
-  const source=new URL(url),pathname=source.pathname.replace(/\/+$/,'');
-  const product=/\/(?:products?|product-page|p)\/[^/]+$/i.test(pathname);
-  const generic=!pathname||/^\/(?:collections(?:\/[^/]+)?|pages\/[^/]+|shop|store|contact|about|gallery|artworks?|paintings|prints)$/i.test(pathname)||
-   /\.(?:png|jpe?g|gif|webp|svg|avif)$/i.test(pathname)||links.some(link=>{
-    const candidate=new URL(link.url);
-    return candidate.origin===source.origin&&candidate.pathname.replace(/\/+$/,'')===pathname;
-   });
-  if(product||!generic)return {url,label:'Shop this artwork'};
- }
- const store=links.find(link=>link.icon==='shop'||/\b(?:shop|store)\b/i.test(link.title));
- if(store)return {url:store.url,label:'Visit the artist’s shop'};
- const contact=links.find(link=>/\b(?:contact|enquir(?:e|y|ies)|inquir(?:e|y|ies))\b/i.test(link.title));
- return contact?{url:contact.url,label:'Enquire about this artwork'}:null;
+export function artworkPlaqueLink(artwork){
+ const url=artwork.panelUrl===undefined?artworkPurchaseListing(artwork.sourceUrl):artworkActionURL(artwork.panelUrl);
+ if(!url)return null;
+ const verified=verifiedArtworkPurchase(artwork);
+ const selected=artistLinkIcon(artwork.panelIcon)?.id;
+ const icon=artwork.panelIcon?(selected||'external'):verified?'shop':'external';
+ if(icon==='shop'&&verified)return {url,icon,label:'Shop this artwork'};
+ return {url,icon:icon==='shop'?'external':icon,label:url.startsWith('mailto:')?'Email the artist':'Open artwork link'};
 }
 
 export function enquiryLink({email,artist,number,title,galleryURL}){
@@ -30,14 +23,13 @@ export function enquiryLink({email,artist,number,title,galleryURL}){
 }
 
 export class ArtworkEnquiry{
- constructor({root,frame,settings,artist,galleryURL,catalogue,delay=2000}){
+ constructor({root,frame,settings,artist,galleryURL,delay=2000}){
   this.artist=artist;this.settings=settings;this.galleryURL=galleryURL;this.delay=delay;
   this.current=null;this.timer=null;this.suppressed=false;
   this.button=document.createElement('button');
   this.button.type='button';this.button.setAttribute('aria-haspopup','dialog');
   this.plaque=settings.retractablePlaque===true;
   if(this.plaque){
-   this.links=publishedArtistLinks(catalogue);
    const slot=document.createElement('div');slot.id='artwork-plaque';slot.inert=true;slot.dataset.position='closed';
    this.plaqueSlot=slot;
    const face=document.createElement('div');face.className='art-plaque-face';
@@ -48,11 +40,11 @@ export class ArtworkEnquiry{
     if(name==='title')this.button.prepend(field);else details.append(field);
     return [name,field];
    });
-   this.button.append(details);
-   this.trolley=document.createElement('a');this.trolley.className='art-plaque-trolley';this.trolley.hidden=true;
-   this.trolley.target='_blank';this.trolley.rel='noopener noreferrer';
-   this.trolley.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h3l3 12h12l2-9H6"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>';
-   face.append(this.button,this.trolley);slot.append(face);frame.append(slot);
+   this.message=document.createElement('span');this.message.className='art-plaque-message';
+   this.button.append(this.message,details);
+   this.action=document.createElement('a');this.action.className='art-plaque-action';this.action.hidden=true;
+   this.action.rel='noopener noreferrer';
+   face.append(this.button,this.action);slot.append(face);frame.append(slot);
   }else{
    this.button.id='art-enquire';this.button.textContent=settings.enquiries?'ENQUIRE ABOUT THIS ARTWORK':'ABOUT THIS ARTWORK';
    this.button.hidden=true;root.append(this.button);
@@ -102,13 +94,17 @@ export class ArtworkEnquiry{
     const title=details.title||'Artwork '+number;
     this.button.setAttribute('aria-label','About this artwork: '+title);
     this.button.title=title;
-    const destination=artworkPlaqueLink(artwork,this.links);
-    this.trolley.hidden=!destination;
+    this.message.textContent=artwork.panelMessage||'';
+    this.message.hidden=!this.message.textContent;
+    const destination=artworkPlaqueLink(artwork);
+    this.action.hidden=!destination;
     if(destination){
-     this.trolley.href=destination.url;
-     this.trolley.setAttribute('aria-label',destination.label);
-     this.trolley.title=destination.label;
-    }else this.trolley.removeAttribute('href');
+     this.action.href=destination.url;
+     this.action.target=destination.url.startsWith('mailto:')?'_self':'_blank';
+     this.action.setAttribute('aria-label',destination.label);
+     this.action.title=destination.label;
+     this.action.replaceChildren(makeArtistLinkGlyph(destination.icon,'assets/browser/chain-icons'));
+    }else this.action.removeAttribute('href');
    }
   }
   if(this.plaque){
@@ -132,7 +128,7 @@ export class ArtworkEnquiry{
  }
  open(){
   if(!this.current||this.button.hidden||this.plaqueSlot?.inert||this.panel.open)return;
-  const {artwork,number}=this.current,title=this.current.title||artwork.title?.trim()||'Artwork '+number;
+  const {artwork,number}=this.current,title=this.current.title||artworkPlaqueDetails(artwork,number,number).title||'Untitled artwork';
   this.heading.textContent=title;this.artistLine.textContent=this.artist;
   this.information.textContent=artwork.information||'';this.information.hidden=!artwork.information;
   const destination=this.plaque&&commerceURL(artwork.sourceUrl);

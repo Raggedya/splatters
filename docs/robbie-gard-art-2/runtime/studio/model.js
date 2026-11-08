@@ -2,6 +2,7 @@ import {validateEmbed} from '../feasibility/bandcamp/embed.js';
 export const SCHEMA_VERSION=1,PACKAGE_SLOTS=10,ARTWORK_LIMIT=10;
 export const DIRECTORY_SLUG='artists';
 export const DEFAULT_ART_EMAIL='andrewharris501@gmail.com',ART_INFORMATION_LIMIT=6000;
+export const ART_PANEL_MESSAGE_LIMIT=160;
 export function enquiryEmail(value){return typeof value==='string'&&value.length<=254&&/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/.test(value)?value:null;}
 export const ARTIST_LINK_LIMIT=10,ARTIST_LINK_TITLE_LIMIT=40;
 export {ARTIST_LINK_ICONS} from './artist-link-icons.js';
@@ -35,6 +36,25 @@ export function bandcampTitle(value){const url=bandcamp(value);if(!url)return'';
 export function compactEmbed(value){const result=validateEmbed(value);if(!value.trim().startsWith('<')&&result.src.includes('/size=small/'))result.height=42;if(result.height>150)throw Error('Choose a compact official Bandcamp player (42–150px high) in Share/Embed so its controls remain visible.');return result;}
 export function https(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port?u.href:null;}catch{return null;}}
 export function commerceURL(value){const url=https(value);if(!url)return null;const u=new URL(url);return u.hostname.includes('.')&&!/^([\d.]+|\[.*\])$/.test(u.hostname)&&!/(^|\.)(localhost|local|lan|internal)$/.test(u.hostname)?url:null;}
+export function artworkActionURL(value){
+ const email=typeof value==='string'&&/^mailto:/i.test(value)?enquiryEmail(value.slice(7)):null;
+ return email?'mailto:'+encodeURIComponent(email):commerceURL(value);
+}
+export function artworkPurchaseListing(value){
+ const url=commerceURL(value);
+ if(!url)return null;
+ const path=new URL(url).pathname.replace(/\/+$/,'');
+ if(!path||/^\/(?:collections(?:\/[^/]+)?|(?:pages\/)?(?:shop|store|contact|about|gallery|artworks?|paintings|prints)|products?)$/i.test(path)||
+  /\.(?:png|jpe?g|gif|webp|svg|avif)$/i.test(path))return null;
+ return url;
+}
+export function verifiedArtworkPurchase(art){
+ const destination=artworkPurchaseListing(art.panelUrl??art.sourceUrl);
+ const check=art.panelPurchase;
+ const sold=/^\s*(?:availability\s*:\s*)?(?:sold(?:\s+out)?|out of stock|not for sale)\b/im.test(art.information||'');
+ return !!(destination&&!sold&&check?.url===destination&&check.revision===art.revision&&
+  typeof check.verifiedAt==='string'&&Number.isFinite(Date.parse(check.verifiedAt)));
+}
 export function visitURL(value){const url=commerceURL(value);if(!url)return null;const u=new URL(url);return /^[a-z0-9][a-z0-9-]*\.bandcamp\.com$/.test(u.hostname)&&/^(\/|\/(track|album)\/[^/]+\/?)$/.test(u.pathname)?url:null;}
 export function bandcamp(value){const url=https(value);if(!url)return null;const u=new URL(url);return /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.bandcamp\.com$/.test(u.hostname)&&/^\/(track|album)\/[^/]+\/?$/.test(u.pathname)?url:null;}
 export function newArtistLink(title='',url=''){return{id:uid('link'),title,url,order:0};}
@@ -98,6 +118,15 @@ export function validateBand(b,{preview=false}={}){
   for(const art of songArtworks({...s,additionalArtworks:Array.isArray(s.additionalArtworks)?s.additionalArtworks:[]})){
    if(art.information!==undefined)need(typeof art.information==='string'&&art.information.length<=ART_INFORMATION_LIMIT,label+'artwork information must be at most '+ART_INFORMATION_LIMIT+' characters.');
    if(art.sourceUrl!==undefined)need(typeof art.sourceUrl==='string'&&art.sourceUrl.length<=2000&&(!art.sourceUrl||commerceURL(art.sourceUrl)),label+'artwork source must be a public HTTPS URL.');
+   if(art.panelIcon!==undefined)need(isArtistLinkIconId(art.panelIcon),label+'invalid artwork panel icon.');
+   if(art.panelMessage!==undefined)need(typeof art.panelMessage==='string'&&art.panelMessage.length<=ART_PANEL_MESSAGE_LIMIT,label+'artwork panel message is too long.');
+   if(art.panelUrl!==undefined)need(typeof art.panelUrl==='string'&&art.panelUrl.length<=2000&&(!art.panelUrl||artworkActionURL(art.panelUrl)),label+'artwork action must be a public HTTPS URL or mailto: email.');
+   if(art.panelPurchase!==undefined){
+    const check=art.panelPurchase;
+    need(check&&typeof check==='object'&&!Array.isArray(check)&&!!artworkPurchaseListing(check.url)&&artworkPurchaseListing(check.url)===check.url&&
+     Number.isInteger(check.revision)&&check.revision>0&&typeof check.verifiedAt==='string'&&Number.isFinite(Date.parse(check.verifiedAt)),
+    label+'invalid artwork purchase confirmation.');
+   }
   }
   const extras=s.additionalArtworks;
   need(extras===undefined||Array.isArray(extras)&&extras.length<=ARTWORK_LIMIT-2&&(!extras.length||!!s.secondaryArtwork),label+'use one to '+ARTWORK_LIMIT+' artworks in sequence.');
@@ -146,6 +175,15 @@ if(preview&&!errors.length)need(playable>0,'Enable at least one complete, author
 export function reorder(b,from,to){if(!Number.isInteger(from)||!Number.isInteger(to)||from<0||to<0||from>=b.songs.length||to>=b.songs.length)throw Error('Invalid order');const [song]=b.songs.splice(from,1);b.songs.splice(to,0,song);return b;}
 export function purchaseDestination(song){return song?.purchase?.verified&&Number.isFinite(Date.parse(song.purchase.verifiedAt))?bandcamp(song.purchase.url):null;}
 export function audioAdapter(source){return{kind:source.type,controllable:source.type==='local-audio',playbackIntegrated:source.type==='local-audio',requiresExternalApproval:source.type==='bandcamp-embed'};}
-const catalogueArtwork=({id,revision,src,credit='',creditUrl='',information,sourceUrl},plaque)=>({id,revision,src,credit,creditUrl,
- ...(information?{information}:{}),...(plaque&&commerceURL(sourceUrl)?{sourceUrl:commerceURL(sourceUrl)}:{})});
+const catalogueArtwork=(art,plaque)=>{
+ const {id,revision,src,credit='',creditUrl='',information,title,sourceUrl,panelIcon,panelMessage,panelUrl,panelPurchase}=art;
+ return {id,revision,src,credit,creditUrl,...(information?{information}:{}),
+  ...(plaque?{
+   ...(typeof title==='string'?{title}:{}),
+   ...(commerceURL(sourceUrl)?{sourceUrl:commerceURL(sourceUrl)}:{}),
+   ...(panelIcon?{panelIcon}:{}),...(panelMessage?.trim()?{panelMessage:panelMessage.trim()}:{}),
+   ...(panelUrl!==undefined?{panelUrl}:{}),
+   ...(verifiedArtworkPurchase(art)?{panelPurchase:{url:panelPurchase.url,revision:panelPurchase.revision,verifiedAt:panelPurchase.verifiedAt}}:{}),
+  }:{})};
+};
 export function toCatalogue(b){const result=validateBand(b,{preview:true});if(result.errors.length)throw Error(result.errors.join('\n'));const plaque=b.art?.retractablePlaque===true,master=usesMasterMusic(b);return{schemaVersion:1,bandId:b.id,...(b.art?.enabled?{art:{enabled:true,enquiries:!!b.art.enquiries,...(master?{musicMode:'master'}:{}),...(plaque?{retractablePlaque:true}:{}),...(b.art.enquiries?{email:b.art.email}:{})}}:{}),...(b.artistLinks!==undefined?{artistLinks:publishedArtistLinks(b)}:b.promotion?.url&&commerceURL(b.promotion.url)?{promotion:{title:b.promotion.title.trim(),url:commerceURL(b.promotion.url)}}:{}),entries:b.songs.filter(s=>s.enabled).map(s=>({id:s.id,title:s.title||(master?'Artwork collection':''),artist:{id:b.id,name:s.artist||b.name},artwork:catalogueArtwork(s.artwork,b.art?.enabled&&plaque),audio:master?{kind:'master-ambient'}:s.source.type==='bandcamp-embed'?{kind:'bandcamp-embed',...compactEmbed(s.source.reference),height:s.source.embedHeight||compactEmbed(s.source.reference).height,trackUrl:s.bandcampUrl,...(s.source.resolvedFrom?{resolvedFrom:s.source.resolvedFrom}:{}),attribution:'Official Bandcamp player',license:'Official embedded playback; no audio is hosted by sPlatters.'}:{src:s.source.reference,license:s.source.license,attribution:s.source.attribution,creditUrl:s.source.creditUrl},purchase:master?null:{url:s.purchase.url,verified:s.purchase.verified,verifiedAt:s.purchase.verifiedAt},...(s.actions?{actions:master?{merchUrl:s.actions.merchUrl}:structuredClone(s.actions)}:{}),...(s.secondaryArtwork?{secondaryArtwork:catalogueArtwork(s.secondaryArtwork,b.art?.enabled&&plaque)}:{}),...(s.additionalArtworks?.length?{additionalArtworks:s.additionalArtworks.map(art=>catalogueArtwork(art,b.art?.enabled&&plaque))}:{}),spotifyUrl:s.spotifyUrl}))};}

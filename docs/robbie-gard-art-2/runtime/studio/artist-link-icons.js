@@ -56,6 +56,10 @@ export const ARTIST_LINK_ICON_GROUPS = [
 
 const iconsById = new Map(ARTIST_LINK_ICON_GROUPS.flatMap(group => group.icons.map(icon => [icon.id, icon])));
 export const ARTIST_LINK_ICONS = Object.freeze([...iconsById.keys()]);
+const heart = outline('heart','Heart','<path d="M12 21 4 13a5 5 0 0 1 8-6 5 5 0 0 1 8 6z"/>');
+iconsById.set(heart.id,heart);
+export const ARTWORK_PANEL_ICON_GROUPS = ARTIST_LINK_ICON_GROUPS.map(group =>
+ group.name==='Social & community'?{...group,icons:[heart,...group.icons]}:group);
 export const artistLinkIcon = id => iconsById.get(id);
 
 export function makeArtistLinkGlyph(id, brandBase) {

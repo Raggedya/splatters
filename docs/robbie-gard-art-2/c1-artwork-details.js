@@ -10,6 +10,11 @@ const amount='(?:'+currency+')?\\d[\\d,.]*(?:\\s+'+currencyCode+')?';
 const pricePattern=new RegExp('^(?:from\\s+)?'+amount+'(?:\\s*[-–]\\s*'+amount+')?(?:\\s*\\(was\\s+'+amount+'\\))?(?:\\s+(?:for (?:the )?)?(?:original|print|per print))?$','i');
 const explicitCurrency=new RegExp('(?:^|\\s)'+currency+'\\d|\\d\\s+'+currencyCode+'\\b','i');
 const detailLine=/^(?:title|medium|dimensions?|size|year|edition|material|availability|price|sale price|listed prices|description|artist|artwork|canvas|frame|image|resolution)\s*:/i;
+const assetIdentifier=/^(?:(?:att[._-]|(?:img|dsc|pxl|dji|image|untitled)[_-]\d)[\w.-]*$|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$|[a-f\d]{20,}$)|\.(?:avif|gif|heic|jpe?g|png|tiff?|webp)$/i;
+function displayTitle(value){
+ const title=typeof value==='string'?value.trim():'';
+ return title.length<=240&&!assetIdentifier.test(title)?title:'';
+}
 
 function physicalSize(line){
  const value=line.replace(dimensionsLabel,'').trim();
@@ -42,7 +47,7 @@ export function artworkPlaqueDetails(artwork,number,total){
   !/^(?:from\b|sold\b|in stock\b|out of stock\b|on enquiry\b|https?:|<|[$€£¥]|\d+[.,]?\d*\s*(?:px|×|x)\s*\d)/i.test(first)&&
   (lines[1]===''||lines.slice(1).some(line=>detailLine.test(line)||physicalSize(line)||explicitCurrency.test(line))||
    lines.length===1&&!/[.!?]$/.test(first)&&!/\b(?:acrylic|oil|gouache|watercolou?r|ink|mixed media) on\b/i.test(first));
- const title=artwork.title?.trim()||titleField?.replace(/^title\s*:\s*/i,'')||(heading?first:'');
+ const title=displayTitle(artwork.title)||displayTitle(titleField?.replace(/^title\s*:\s*/i,''))||displayTitle(heading?first:'');
  const preferred=lines.filter(line=>dimensionsLabel.exec(line)?.[1]).map(physicalSize).filter(Boolean);
  const sizes=[...new Set(preferred.length?preferred:lines.map(physicalSize).filter(Boolean))];
  return {title,number:String(number).padStart(2,'0')+' / '+String(total).padStart(2,'0'),
