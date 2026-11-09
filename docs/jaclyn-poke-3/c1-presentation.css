@@ -33,14 +33,31 @@ output small{font-size:.72em;margin-left:1px}
 }
 .artist-plaque svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .artist-plaque span{position:relative;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* Keep the Atelier nameplate above the outer bronze rail, outside the paint plane. */
+/* Atelier's rectangular nameplate is mounted above the outer bronze rail. */
 .scene:has(> .atelier-wall-lights) .artist-plaque{
- top:auto;bottom:calc(100% + var(--frame-edge));transform:translateX(-50%);
- max-width:clamp(86%,calc(var(--name-length,9) * 1.7%),100%);
+ top:auto;bottom:calc(100% + var(--frame-edge) + 2px);transform:translateX(-50%);
+ box-sizing:border-box;max-width:100%;
  height:auto;min-height:clamp(23px,5.3vw,37px);
- padding-block:clamp(2px,calc((var(--name-length,9) - 32) * .18px),6px);
- font-size:min(26px,3.8vw,max(9px,calc(var(--canvas-width) * 1.06 / var(--name-length,9))),
-  max(4.5px,calc(3px + var(--canvas-width) * 1.25 / var(--name-length,9))));
+ padding:3px clamp(15px,4vw,24px) 4px;
+ border:1px solid #c79863;border-radius:3px;
+ background:linear-gradient(180deg,#4a3324 0%,#2b1e17 22%,#201612 64%,#362418 100%);
+ box-shadow:inset 0 1px 0 #f1c89055,inset 0 -1px 0 #110c09,0 2px 4px #08040399;
+ color:#edc995;line-height:1.13;
+ font-size:min(clamp(10px,3.5vw,24px),max(4.5px,calc(3px + var(--canvas-width) * 1.25 / var(--name-length,9))));
+ text-shadow:0 -.4px #ffe5b94d,0 1px 1px #130a05;
+}
+.scene:has(> .atelier-wall-lights) .artist-plaque svg{display:none}
+.scene:has(> .atelier-wall-lights) .artist-plaque::before{
+ content:"";position:absolute;inset:2px;border:1px solid #ad805355;border-radius:1px;
+}
+.scene:has(> .atelier-wall-lights) .artist-plaque::after{
+ --rivet:radial-gradient(circle closest-side,#ffe2b1 8%,#c48d50 46%,#694022 77%,transparent 100%);
+ --rivet-size:clamp(4px,1.15vw,6px);
+ content:"";position:absolute;inset:4px;
+ background:var(--rivet) left top / var(--rivet-size) var(--rivet-size) no-repeat,
+  var(--rivet) right top / var(--rivet-size) var(--rivet-size) no-repeat,
+  var(--rivet) left bottom / var(--rivet-size) var(--rivet-size) no-repeat,
+  var(--rivet) right bottom / var(--rivet-size) var(--rivet-size) no-repeat;
 }
 .scene:has(> .atelier-wall-lights) .artist-plaque span{
  white-space:normal;overflow:visible;overflow-wrap:anywhere;text-wrap:balance;
