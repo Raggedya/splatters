@@ -6,7 +6,7 @@ import {ActionTiming} from './c1-action-timing.js';
 import {ARTWORK_LIMIT,commerceURL,songArtworks} from './runtime/studio/model.js';
 import {artistNavigation,renderArtistNavigation} from './c1-artist-links.js';
 import {eligibleCatalogue,nextSongIndex} from './c1-catalogue.js';
-import {activity,initialiseAnalytics,eventUUID,reportingDestination} from './c1-analytics.js?v=2';
+import {activity,initialiseAnalytics,eventUUID} from './c1-analytics.js';
 import {manualEmbed} from './c1-manual-player.js';
 import {CompletionUI} from './c1-completion.js';
 import {coveredArtwork,CANVAS_ASPECT} from './c1-artwork.js';
@@ -29,8 +29,7 @@ const purchase=new SongPurchase({availableFromStart:true}),onboarding=new FirstP
 const reduced=matchMedia('(prefers-reduced-motion: reduce)'),tutorial=new FirstPlayTutorial();const completion=new CompletionUI({scene,launcher,nav:$('cta-strip'),root:$('completion-actions'),buy:$('buy'),next:$('next'),merch:$('buy-merch'),reduced,onLayout:refreshRail});const actionTiming=new ActionTiming(()=>completion.finish());let cueVersion=0,requestedCue=null,cueAnimation=null;let storage;try{storage=localStorage;}catch{}const progress=new ProgressStore(storage);
 const controlCarousel=installControlCarousel($('left-controls'),$('cta-strip'),$('cta-previous'),$('cta-next'),reduced,abort.signal);
 let navigation=null,railCount=-1;let paint,material,paintAccumulator=0;const bursts=[];
-const reportedLaunches=new WeakMap(),reportedReveals=new WeakSet(),paintingIds=new WeakMap(),completedArtworks=new Set();
-let reportedGalleryCompletion=false;
+const reportedLaunches=new WeakMap(),reportedCompletions=new WeakSet(),paintingIds=new WeakMap();
 let reveal=new ProgressiveReveal(),artworks=[],previousSource=null,nextSource=null,stageStartLaunch=0,assistanceHistory=[];
 let handoffCueDismissed=false,artEnquiry=null,artPresentation=null;
 let config,entries,index=0,source,plaster,relief,field,session,geometry,observer,raf=0,last=0,disposed=false,token=0,coverage=0,impactAt=-10,impact=null,renderCosts=[],frameCosts=[],previousProjection=null,worker=null,renderId=0,appliedRender=0;
@@ -75,23 +74,7 @@ function refreshRail(force=false){
  controlCarousel.refresh();
 }
 function message(text){if(status.textContent!==text)status.textContent=text;}
-function applyPaint(study){const c=$('surface'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);g.drawImage(previousSource||plaster,0,0,c.width,c.height);g.drawImage(study.colour,0,0);gloss.width=c.width;gloss.height=c.height;gloss.getContext('2d').drawImage(study.lighting,0,0,c.width,c.height);coverage=reveal.update(study.coverage);scene.classList.toggle('complete',reveal.complete);scene.classList.toggle('settled',reveal.complete&&!paint.active);if(reveal.coverages[reveal.stage]===1)reportArtworkReveal();if(reveal.complete&&!paint.active)actionTiming.artworkComplete(coverage===1?1:0);updateArtworkCounter();scene.style.setProperty('--progress',coverage);}
-function artworkAnalytics(){
- const artwork=artworks[reveal.stage];
- return artwork?{artworkId:artwork.id,number:entries.slice(0,index).reduce((sum,entry)=>sum+songArtworks(entry).length,0)+reveal.stage+1}:null;
-}
-function reportArtworkReveal(){
- if(reportedReveals.has(paint))return;
- const artwork=artworkAnalytics();
- if(!artwork||!sessionSongId)return;
- reportedReveals.add(paint);
- activity('artwork_revealed',sessionSongId,eventUUID(),artwork);
- completedArtworks.add(artwork.artworkId);
- if(!reportedGalleryCompletion&&completedArtworks.size===entries.reduce((sum,entry)=>sum+songArtworks(entry).length,0)){
-  reportedGalleryCompletion=true;
-  activity('gallery_completed',sessionSongId);
- }
-}
+function applyPaint(study){const c=$('surface'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);g.drawImage(previousSource||plaster,0,0,c.width,c.height);g.drawImage(study.colour,0,0);gloss.width=c.width;gloss.height=c.height;gloss.getContext('2d').drawImage(study.lighting,0,0,c.width,c.height);coverage=reveal.update(study.coverage);scene.classList.toggle('complete',reveal.complete);scene.classList.toggle('settled',reveal.complete&&!paint.active);if(reveal.complete&&!paint.active){if(!reportedCompletions.has(session)){reportedCompletions.add(session);activity('artwork_complete',sessionSongId,paintingIds.get(session));}actionTiming.artworkComplete(coverage===1?1:0);}updateArtworkCounter();scene.style.setProperty('--progress',coverage);}
 function updateArtworkCounter(){const counter=$('number'),value=reveal.completed+'/'+reveal.images;if(counter.textContent!==value)counter.textContent=value;}
 function renderPaint(){if(!material)return;const began=performance.now();applyPaint(material.render(paint?.complete||false));appliedRender=++renderId;renderCosts.push(performance.now()-began);if(renderCosts.length>300)renderCosts.shift();if(paint)paint.dirty=false;}
 function measure(){if(!source||disposed)return;
@@ -230,16 +213,7 @@ on($('buy-merch'),'click',()=>activity('merch_click',sessionSongId));
 $('buy').dataset.cta='song-purchase';
 on(scene,'click',e=>{
  const link=e.target.closest('a[href]');
- if(!link||!sessionSongId||e.defaultPrevented)return;
- if(link.matches('.art-plaque-action')){
-  const artwork=artworkAnalytics();
-  if(artwork)activity('artwork_action_clicked',sessionSongId,null,artwork);
-  return;
- }
- if(link.dataset.artistLink||link.dataset.cta||link.id==='buy-merch'){
-  const url=reportingDestination(link.href),label=(link.getAttribute('aria-label')||link.textContent).trim().replace(/\s+/g,' ').slice(0,80);
-  if(url&&label)activity('cta_clicked',sessionSongId,null,{label,url});
- }
+ if(!link)return;
  if(link.dataset.cta==='song-purchase')activity('buy_click',sessionSongId);
  else if(link.dataset.artistLink==='link-legacy-promotion')activity('merch_click',sessionSongId);
  else if(link.dataset.artistLink&&new URL(link.href).hostname.endsWith('.bandcamp.com'))activity('bandcamp_visit_click',sessionSongId);
