@@ -1,3 +1,4 @@
+import {installScore} from './clearfire-score.js';
 import {SteelReveal} from './clearfire-renderer.js';
 import {FireLayer,drawImpact} from './runtime/engine/fire-effects.js';
 import {ArtworkEnquiry} from './c1-art.js';
@@ -28,7 +29,7 @@ const published=document.documentElement.dataset.release==='1';
 const $=id=>document.getElementById(id),scene=document.querySelector('.scene'),object=document.querySelector('.canvas-object'),stage=document.querySelector('.artwork-stage'),launcher=document.querySelector('.launcher'),body=document.querySelector('.body'),ball=document.querySelector('.paintball'),cradle=document.querySelector('.cradle'),bands=[...document.querySelectorAll('.elastic')];let frame=$('bandcamp'),playerReady=false,selecting=false;const transitionLog=[],archivedSessions=new WeakSet();let sessionSongId=null;
 const abort=new AbortController(),on=(el,type,fn)=>el.addEventListener(type,fn,{signal:abort.signal}),params=new URLSearchParams(location.search),snapshot=params.get('snapshot')||'2541643d-8818-4396-a30e-e3da420321a3';
 const purchase=new SongPurchase({availableFromStart:true}),onboarding=new FirstPlaySequence();
-const reduced=matchMedia('(prefers-reduced-motion: reduce)'),tutorial=new FirstPlayTutorial();const completion=new CompletionUI({scene,launcher,nav:$('cta-strip'),root:$('completion-actions'),buy:$('buy'),next:$('next'),merch:$('buy-merch'),reduced,onLayout:refreshRail});const actionTiming=new ActionTiming(()=>completion.finish());let cueVersion=0,requestedCue=null,cueAnimation=null;let storage;try{storage=localStorage;}catch{}const progress=new ProgressStore(storage);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)'),tutorial=new FirstPlayTutorial();const completion=new CompletionUI({scene,launcher,nav:$('cta-strip'),root:$('completion-actions'),buy:$('buy'),next:$('next'),merch:$('buy-merch'),reduced,onLayout:refreshRail});const actionTiming=new ActionTiming(()=>completion.finish());let cueVersion=0,requestedCue=null,cueAnimation=null;let storage;try{storage=localStorage;}catch{}const progress=new ProgressStore(storage);const gameScore=installScore($('number'),storage);
 const controlCarousel=installControlCarousel($('left-controls'),$('cta-strip'),$('cta-previous'),$('cta-next'),reduced,abort.signal);
 let navigation=null,railCount=-1;let paint,material,paintAccumulator=0;const bursts=[];
 const reportedLaunches=new WeakMap(),reportedReveals=new WeakSet(),paintingIds=new WeakMap(),completedArtworks=new Set();
@@ -96,7 +97,10 @@ function reportArtworkReveal(){
   activity('gallery_completed',sessionSongId);
  }
 }
-function updateArtworkCounter(){const counter=$('number'),value=reveal.completed+'/'+reveal.images;if(counter.textContent!==value)counter.textContent=value;}
+let scoreStage=-1,scoreStart=0,scoreFinished=null;
+function resetGameScore(){scoreStage=reveal.stage;scoreFinished=null;const a=artworks[reveal.stage];gameScore.reset([config.bandId||config.bandName||'',a?.id,a?.revision,a?.src||a?.url||'']);}
+function updateGameScore(){if(!session||selecting)return;if(scoreStage!==reveal.stage){scoreStart=session.launches-1;resetGameScore();}const p=reveal.coverages[reveal.stage];const shots=Math.max(0,session.launches-scoreStart);if(p===1&&scoreFinished===null)scoreFinished=shots;gameScore.update(scoreFinished??shots,p,!params.has('design'));}
+function updateArtworkCounter(){updateGameScore();const counter=$('number'),value=reveal.completed+'/'+reveal.images;if(counter.textContent!==value)counter.textContent=value;}
 function renderPaint(){if(!material)return;const began=performance.now();applyPaint(material.render(paint?.complete||false));appliedRender=++renderId;renderCosts.push(performance.now()-began);if(renderCosts.length>300)renderCosts.shift();if(paint)paint.dirty=false;}
 function measure(){if(!source||disposed)return;
  const area=stage.getBoundingClientRect(),ratio=CANVAS_ASPECT,width=Math.max(20,Math.min(area.width-32,(area.height-35)*ratio)),height=width/ratio;
@@ -171,7 +175,7 @@ function draw(){if(!geometry||!session||selecting)return;const counted=reportedL
   else if(paint.complete)session.phase='ready';
   else if(paint.launches>=13)session.phase='settling';
  }
- updateArtPresentation();
+ updateGameScore();updateArtPresentation();
  const destination=purchase.update(session.launches);$('buy').hidden=!destination||!!navigation?.duplicates(destination);if(destination)$('buy').href=destination;else $('buy').removeAttribute('href');refreshRail();
  const offset=session.recoil(reduced.matches),f=geometry.launcher.factor,ox=offset.x/f,oy=offset.y/f;
  cradle.style.transform='translate('+ox+'px,'+oy+'px)';
@@ -208,7 +212,7 @@ async function select(next,replay=false,preservePurchase=replay){
  handoffCueDismissed=false;
  steel.reset();coverage=0;scene.style.setProperty('--progress',0);const sg=$('surface').getContext('2d');sg.clearRect(0,0,$('surface').width,$('surface').height);if(config?.clearfire){sg.fillStyle='#000';sg.fillRect(0,0,$('surface').width,$('surface').height);}else sg.drawImage(plaster,0,0,$('surface').width,$('surface').height);gloss.getContext('2d').clearRect(0,0,gloss.width,gloss.height);marker.hidden=true;projectile.hidden=trail.hidden=true;
  field?.dispose();field=null;assistanceHistory=[];source=previousSource=nextSource=null;
- artworks=songArtworks(entries[next]);const reviewDesign=config?.clearfire?.preview?Number(params.get('design')):0;const selectedReview=Number.isInteger(reviewDesign)&&reviewDesign>=1&&reviewDesign<=artworks.length;if(selectedReview)artworks=[artworks[reviewDesign-1]];reveal=new ProgressiveReveal(artworks.length);updateArtworkCounter();stageStartLaunch=0;scene.classList.remove('complete','settled');
+ artworks=songArtworks(entries[next]);const reviewDesign=config?.clearfire?.preview?Number(params.get('design')):0;const selectedReview=Number.isInteger(reviewDesign)&&reviewDesign>=1&&reviewDesign<=artworks.length;if(selectedReview)artworks=[artworks[reviewDesign-1]];reveal=new ProgressiveReveal(artworks.length);scoreStart=0;resetGameScore();gameScore.update(0,0,false);updateArtworkCounter();stageStartLaunch=0;scene.classList.remove('complete','settled');
  try{
  completion.nextAvailable=nextSongIndex(entries,next)!==null;if(!await completion.reset()||version!==token)return;
  index=next;const entry=entries[index];if(!artEnquiry&&config.catalogue.art?.enabled)artEnquiry=new ArtworkEnquiry({root:scene,frame:object,settings:config.catalogue.art,catalogue:config.catalogue,artist:config.bandName||entry.artist.name,galleryURL:config.artPublicUrl||''});navigation=artistNavigation(config.catalogue,entry,effectiveBandcamp(entry,config.catalogue.art?.musicMode==='master'?null:config.bandcampArtistUrl));renderArtistNavigation($('artist-custom-links'),navigation.links);$('next').hidden=!completion.nextAvailable;actionTiming.reset();const promotion=Array.isArray(config.catalogue.artistLinks)?null:config.catalogue.promotion;const merch=commerceURL(promotion?.url||entry.actions?.merchUrl||''),merchURL=navigation.duplicates(merch)?null:merch;$('buy-merch').textContent=promotion?.url?promotion.title:'BUY MERCH';$('buy-merch').hidden=!merchURL;if(merchURL)$('buy-merch').href=merchURL;else $('buy-merch').removeAttribute('href');onboarding.reset(replay);purchase.select(entry,preservePurchase);$('buy').hidden=!purchase.update(0)||navigation.duplicates(purchase.url);refreshRail(true);message('Loading artwork…');
