@@ -1,22 +1,27 @@
-import {RevealAssist} from './c1-reveal-assist.js';
+import {RevealAssist} from './c1-reveal-assist.js?strategy=1';
 import {RunningPaint} from './runtime/vendor/splat-v9/running-paint.js';
 import {PAINT} from './c1-tuning.js';
+// A finite burst: placement and overlap determine progress.
+const STRATEGY_RADIUS=.235;
 const clamp=x=>Math.max(0,Math.min(1,x));
 const ease=x=>1-Math.pow(1-clamp(x),3);
+const seeded=()=>{let seed=384;return()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);};
 // Reuses LiquidField's seeded organic silhouette, stamp and shared mass/mask.
 // This adapter keeps relief after motion stops; the old drying solver is not run.
 export class CinematicPaint {
  constructor(field){this.field=field;this.assist=new RevealAssist(field);this.assistPending=0;this.drips=[];this.hits=0;this.launches=0;this.finishing=0;this.complete=false;this.dirty=true;this.steps=0;this.coater=new RunningPaint(field);}
  impact(u,v,launch=this.hits+1){const f=this.field;this.hits++;this.launches=Math.max(this.launches,launch);if(this.complete)return;
-  f.deposit(u*f.w,v*f.h,f.w*PAINT.radius);
+  // Identical local footprint for identical aim, independent of shot order.
+  const random=f.random;f.random=seeded();
+  try{f.deposit(u*f.w,v*f.h,f.w*STRATEGY_RADIUS);}finally{f.random=random;}
   if(f.effects.length>PAINT.maxEffects){const old=f.effects.shift();f.stamp(old,old.r);}
   this.assistPending=.48;this.dirty=true;
  }
- seed(e){const f=this.field;
+ seed(e){const f=this.field,random=seeded();
   for(let n=0;n<PAINT.dripsPerHit;n++){
-   const x=e.x+(n-(PAINT.dripsPerHit-1)/2)*e.r*.33+(f.random()-.5)*3,y=e.y+e.r*(.2+f.random()*.25),r=1.5+f.random()*1.1;
+   const x=e.x+(n-(PAINT.dripsPerHit-1)/2)*e.r*.33+(random()-.5)*3,y=e.y+e.r*(.2+random()*.25),r=1.5+random()*1.1;
    if(!this.coater.inside(x,y,r+1))continue;
-   this.drips.push({x,y,tip:y,r,age:0,drift:(f.random()-.5)*PAINT.lateralSpread*2,distance:Math.min(f.h-y-r-1,PAINT.runDistance*(.45+f.random()*.8)),duration:PAINT.runSeconds*(.65+f.random()*.35)});
+   this.drips.push({x,y,tip:y,r,age:0,drift:(random()-.5)*PAINT.lateralSpread*2,distance:Math.min(f.h-y-r-1,(f.h*.27)*(.7+random()*.5)),duration:PAINT.runSeconds*(.65+random()*.35)});
   }
   if(this.drips.length>PAINT.maxDrips)this.drips.splice(0,this.drips.length-PAINT.maxDrips);
  }
@@ -37,7 +42,7 @@ export class CinematicPaint {
    if(!s.branched&&s.age>=PAINT.branchAfter&&s.r>2&&this.drips.length<PAINT.maxDrips){s.branched=true;const x=s.x+s.drift*Math.sin(t*Math.PI/2);this.drips.push({...s,x,y:s.tip,tip:s.tip,age:0,r:s.r*.65,distance:s.distance*.4,drift:-s.drift*.7,duration:s.duration*.7,branched:true});}
   }
   this.drips=this.drips.filter(s=>s.age<s.duration);
-  if(this.assistPending>0){this.assistPending-=dt;if(this.assistPending<=0)this.assist.start(this.launches);}
+  if(this.assistPending>0&&!f.effects.length&&!this.drips.length){this.assistPending=0;this.assist.start(this.launches);}
   this.assist.step(dt);
   f.measure();
   // Completion requires the reveal mask to be opaque everywhere. Never grow

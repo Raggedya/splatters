@@ -1,4 +1,4 @@
-import {installScore} from './clearfire-score.js';
+import {installScore} from './clearfire-score.js?strategy=1';
 import {SteelReveal} from './clearfire-renderer.js';
 import {FireLayer,drawImpact} from './runtime/engine/fire-effects.js';
 import {ArtworkEnquiry} from './c1-art.js';
@@ -21,7 +21,7 @@ import {LivingField} from './runtime/engine/living-field.js';
 import {icon} from './runtime/engine/floating-controls.js';
 import {FirstPlayTutorial} from './runtime/engine/bandcamp-player.js';
 import {ProgressStore} from './runtime/engine/progress-store.js';
-import {CinematicPaint} from './c1-wet-paint.js';
+import {CinematicPaint} from './c1-wet-paint.js?strategy=1';
 import {LiveMaterial} from './c1-live-material.js';
 import {PAINT,ARCADE} from './c1-tuning.js';
 import {LauncherSession,planeFromMatrix,pointOnPlane,project,elasticGeometry,predictShot,inputForTarget} from './c1-physics.js';
@@ -173,7 +173,7 @@ function draw(){if(!geometry||!session||selecting)return;const counted=reportedL
   if(reveal.complete)session.phase='complete';
   else if(reveal.awaitingNextImpact&&!nextSource)session.phase='settling';
   else if(paint.complete)session.phase='ready';
-  else if(paint.launches>=13)session.phase='settling';
+
  }
  updateGameScore();updateArtPresentation();
  const destination=purchase.update(session.launches);$('buy').hidden=!destination||!!navigation?.duplicates(destination);if(destination)$('buy').href=destination;else $('buy').removeAttribute('href');refreshRail();
