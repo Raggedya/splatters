@@ -1,7 +1,8 @@
+import {CompletionReturn} from './clearfire-return.js';
 import {installScore} from './clearfire-score.js?strategy=2';
 import {SteelReveal} from './clearfire-renderer.js';
 import {FireLayer,drawImpact} from './runtime/engine/fire-effects.js';
-import {ArtworkEnquiry} from './c1-art.js';
+import {ArtworkEnquiry} from './c1-art.js?return=1';
 import {effectiveBandcamp,loadAmbientMusic,withAmbientMusic} from './c1-ambient.js';
 import {ProgressiveReveal} from './c1-progressive.js';
 import {installControlCarousel} from './c1-control-chain.js';
@@ -63,7 +64,7 @@ function linenBlank(texture){
 const grab=document.createElement('button');grab.className='c1-grab';grab.setAttribute('aria-label','Pull fireball down and release to launch. Arrow keys aim; Space launches.');launcher.append(grab);
 const projectile=ball.cloneNode();projectile.className='c1-projectile';projectile.hidden=true;scene.append(projectile);const trail=projectile.cloneNode();trail.className='c1-trail';trail.src='assets/browser/fire-embers.webp';scene.append(trail);
 const fire=new FireLayer();
-const steel=new SteelReveal($('surface'),reduced);
+const steel=new SteelReveal($('surface'),reduced);const completionReturn=new CompletionReturn(object,reduced);
 const gloss=document.createElement('canvas');gloss.id='wet-lighting';$('surface').after(gloss);
 const marker=document.createElement('div');marker.className='c1-impact';marker.hidden=true;object.append(marker);
 const overlay=document.createElementNS('http://www.w3.org/2000/svg','svg');overlay.classList.add('c1-trajectory');overlay.setAttribute('aria-hidden','true');scene.append(overlay);const debug=params.get('debug')==='geometry';let forecast=null,lastForecast=null;
@@ -80,7 +81,7 @@ function refreshRail(force=false){
  controlCarousel.refresh();
 }
 function message(text){if(status.textContent!==text)status.textContent=text;}
-function applyPaint(study){if(config?.clearfire)paint.considerFinish(study.coverage);const c=$('surface'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);if(config?.clearfire)steel.update(source.steelArtwork,study.mask,study.coverage,config.clearfire,paint.complete);else{g.drawImage(previousSource||plaster,0,0,c.width,c.height);g.drawImage(study.colour,0,0);}gloss.width=c.width;gloss.height=c.height;const lighting=gloss.getContext('2d');if(!config?.clearfire)lighting.drawImage(study.lighting,0,0,c.width,c.height);if(!paint.complete)fire.draw(lighting,field,paint.drips,study.mask,{width:c.width,height:c.height,burst:PAINT.burstSeconds,spread:PAINT.spreadSeconds,reduced:reduced.matches});coverage=reveal.update(study.coverage);scene.classList.toggle('complete',reveal.complete);scene.classList.toggle('settled',reveal.complete&&!paint.active);if(reveal.coverages[reveal.stage]===1)reportArtworkReveal();if(reveal.complete&&!paint.active){actionTiming.artworkComplete(coverage===1?1:0);}updateArtworkCounter();scene.style.setProperty('--progress',coverage);}
+function applyPaint(study){if(config?.clearfire)paint.considerFinish(study.coverage);const c=$('surface'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);if(config?.clearfire)steel.update(source.steelArtwork,study.mask,study.coverage,config.clearfire,paint.complete);else{g.drawImage(previousSource||plaster,0,0,c.width,c.height);g.drawImage(study.colour,0,0);}gloss.width=c.width;gloss.height=c.height;const lighting=gloss.getContext('2d');if(!config?.clearfire)lighting.drawImage(study.lighting,0,0,c.width,c.height);if(!paint.complete)fire.draw(lighting,field,paint.drips,study.mask,{width:c.width,height:c.height,burst:PAINT.burstSeconds,spread:PAINT.spreadSeconds,reduced:reduced.matches});coverage=reveal.update(study.coverage);scene.classList.toggle('complete',reveal.complete);scene.classList.toggle('settled',reveal.complete&&!paint.active);if(reveal.coverages[reveal.stage]===1)reportArtworkReveal();if(!config?.clearfire&&reveal.complete&&!paint.active){actionTiming.artworkComplete(coverage===1?1:0);}updateArtworkCounter();scene.style.setProperty('--progress',coverage);}
 function artworkAnalytics(){
  const artwork=artworks[reveal.stage];
  return artwork?{artworkId:artwork.id,number:entries.slice(0,index).reduce((sum,entry)=>sum+songArtworks(entry).length,0)+reveal.stage+1}:null;
@@ -129,17 +130,38 @@ async function prepareNextArtwork(artwork,version){
   if(version===token&&!disposed)fail(Error('Artwork '+(reveal.stage+2)+' could not load. Use Replay to try again.'));
  }
 }
-function onHit(e){
- if(nextSource&&reveal.successfulImpact()){
+function advanceArtwork(firstLaunch){
   assistanceHistory.push(paint.state.assistance);
   field.dispose();
   previousSource=source;source=nextSource;nextSource=null;
-  stageStartLaunch=e.id-1;handoffCueDismissed=false;
+  stageStartLaunch=firstLaunch;handoffCueDismissed=false;
   let seed=384;
   field=new LivingField(source,{key:'c1:secondary:'+artworks[reveal.stage].id,w:360,h:360,random:()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296)});
   paint=new CinematicPaint(field);
   material=new LiveMaterial(source,relief,field,$('surface').width,$('surface').height,{maskOnly:!!config?.clearfire});
   void prepareNextArtwork(artworks[reveal.stage+1],token);
+}
+async function returnToCover(){
+ const version=token;
+ if(reveal.stage===artworks.length-1){await select(index,true);return;}
+ if(!nextSource)await prepareNextArtwork(artworks[reveal.stage+1],version);
+ if(version!==token||disposed)return;
+ if(!nextSource)throw Error('The next design could not load. Please use Replay.');
+ if(!reveal.successfulImpact())return;
+ advanceArtwork(session.launches);steel.reset();coverage=0;scoreStart=session.launches;resetGameScore();
+ artEnquiry?.reset();artPresentation=null;document.querySelector('.clearfire-finished-title')?.remove();
+ scene.classList.remove('complete','settled');session.phase='ready';renderPaint();draw();wake();
+}
+function presentCompletedDesign(){
+ if(!config?.clearfire||!paint.complete||session.ball||completionReturn.active)return;
+ let panel=artEnquiry?.plaqueSlot;
+ if(panel){clearTimeout(artEnquiry.timer);artEnquiry.timer=null;panel.querySelector('.art-plaque-face').style.transition='none';panel.dataset.position='open';panel.inert=false;}
+ else{panel=document.createElement('div');panel.className='clearfire-finished-title';panel.textContent=artworks[reveal.stage]?.title||'Design '+(reveal.stage+1);object.append(panel);}
+ completionReturn.show({panel,cover:steel.cover,advance:returnToCover,onError:fail});
+}
+function onHit(e){
+ if(nextSource&&reveal.successfulImpact()){
+  advanceArtwork(e.id-1);
  }
  paint.impact(e.u,e.v,e.id-stageStartLaunch);
  impact={u:e.u,v:e.v,fieldX:e.u*field.w,fieldY:e.v*field.h,point:e.point,id:e.id};impactAt=session.clock;makeBurst(e);
@@ -170,14 +192,15 @@ function draw(){if(!geometry||!session||selecting)return;const counted=reportedL
   activity('start_painting_click',sessionSongId,paintingIds.get(session));
  }activity('paintball_launch',sessionSongId,paintingIds.get(session));reportedLaunches.set(session,e.id);}
  if(!session.ball&&session.phase!=='dragging'){
-  if(reveal.complete)session.phase='complete';
+  if(config?.clearfire&&paint.complete)session.phase='settling';
+  else if(reveal.complete)session.phase='complete';
   else if(reveal.awaitingNextImpact&&!nextSource)session.phase='settling';
   else if(paint.assist.active)session.phase='settling';
   else if(paint.complete)session.phase='ready';
   else if(session.phase==='settling')session.phase='ready';
 
  }
- updateGameScore();updateArtPresentation();
+ updateGameScore();updateArtPresentation();presentCompletedDesign();
  const destination=purchase.update(session.launches);$('buy').hidden=!destination||!!navigation?.duplicates(destination);if(destination)$('buy').href=destination;else $('buy').removeAttribute('href');refreshRail();
  const offset=session.recoil(reduced.matches),f=geometry.launcher.factor,ox=offset.x/f,oy=offset.y/f;
  cradle.style.transform='translate('+ox+'px,'+oy+'px)';
@@ -205,7 +228,7 @@ function draw(){if(!geometry||!session||selecting)return;const counted=reportedL
 function loop(now){raf=0;if(disposed||document.hidden)return;const dt=last?Math.min(.05,(now-last)/1000):0;last=now;const t=performance.now(),misses=session.misses;session.tick(dt);paintAccumulator+=dt;if(paintAccumulator>=1/PAINT.stepHz){paint.step(Math.min(.1,paintAccumulator));paintAccumulator=0;if(paint.dirty)renderPaint();}if(session.misses>misses)message('Miss — no design revealed. Let the ball pass, then aim again.');draw();frameCosts.push(performance.now()-t);if(frameCosts.length>600)frameCosts.shift();if(session.phase==='dragging'||session.phase==='flight'||session.phase==='intro'||session.recoilAge<.55||paint.active||bursts.length)raf=requestAnimationFrame(loop);else last=0;}
 function wake(){if(!raf&&!disposed&&!document.hidden){last=0;raf=requestAnimationFrame(loop);}}
 async function select(next,replay=false,preservePurchase=replay){
- if(selecting)return;artEnquiry?.reset();artPresentation=null;selecting=true;$('error').hidden=true;const version=++token;++renderId;
+ if(selecting)return;completionReturn.cancel();document.querySelector('.clearfire-finished-title')?.remove();artEnquiry?.reset();artPresentation=null;selecting=true;$('error').hidden=true;const version=++token;++renderId;
  for(const id of ['next','replay','save'])$(id).disabled=true;grab.disabled=true;
  if(session&&!archivedSessions.has(session)){transitionLog.push(...session.events.map(e=>({...e,songId:sessionSongId})));archivedSessions.add(session);}
  if(!replay){if(session)transitionLog.push({type:'next',songId:sessionSongId,nextSongId:entries[next].id});frame?.remove();frame=null;playerReady=false;}
@@ -273,7 +296,7 @@ on($('share'),'click',()=>{const sharedSong=sessionSongId;activity('share_click'
 on($('share-close'),'click',()=>shareDialog.close());
 on($('share-copy'),'click',async()=>{shareURL.focus();shareURL.select();shareURL.setSelectionRange(0,shareURL.value.length);try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareURL.value);}else if(!document.execCommand('copy'))throw Error('Clipboard unavailable');activity('share_copy',sessionSongId);shareFeedback.textContent='Link copied. '+(shareDetails(shareURL.value).privateLink?'Same Wi-Fi required.':'');}catch{shareFeedback.textContent='Automatic copy is unavailable. Touch and hold the selected link, then choose Copy.';shareURL.focus();shareURL.select();}});
 on(document,'visibilitychange',()=>{if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0;last=0;session?.cancel();}else{draw();wake();}});
-on(window,'pagehide',()=>{disposed=true;steel.dispose();token++;artEnquiry?.dispose();completion.dispose();cueVersion++;cueAnimation?.cancel();cancelAnimationFrame(raf);worker?.terminate();session?.dispose();field?.dispose();observer?.disconnect();tutorial.dispose();abort.abort();projectile.remove();trail.remove();});
+on(window,'pagehide',()=>{disposed=true;completionReturn.dispose();steel.dispose();token++;artEnquiry?.dispose();completion.dispose();cueVersion++;cueAnimation?.cancel();cancelAnimationFrame(raf);worker?.terminate();session?.dispose();field?.dispose();observer?.disconnect();tutorial.dispose();abort.abort();projectile.remove();trail.remove();});
 function fail(e){$('error').hidden=false;$('error').textContent='C1 preview unavailable: '+e.message;}
 (async()=>{if(!/^[a-f0-9-]{36}$/.test(snapshot))throw Error('Invalid snapshot');const r=await fetch(published?'band.json':'/api/previews/'+snapshot,{cache:'no-store'});if(!r.ok)throw Error('Saved preview unavailable');config=await r.json();if(config.clearfire)configureBrand();initialiseAnalytics(config);try{if(published)throw Error('Published metadata is included');const meta=await(await fetch('/cinematic/artist-link.json?snapshot='+snapshot,{cache:'no-store'})).json();if(meta.bandId===config.bandId)config.bandcampArtistUrl=meta.bandcampArtistUrl;}catch{}const ambient=await loadAmbientMusic(config);entries=await eligibleCatalogue(withAmbientMusic(config.catalogue,ambient),{allowSilentMaster:config.catalogue.art?.musicMode==='master',available:async entry=>{const sequence=songArtworks(entry);if(config.clearfire?.sharedDesigns)return sequence.length>0&&sequence.length<=SHARED_DESIGN_LIMIT;if(sequence.length>ARTWORK_LIMIT)return false;for(const artwork of sequence){const response=await fetch(artworkURL(artwork),{method:'HEAD',cache:'force-cache',signal:AbortSignal.timeout(5000)});if(!response.ok)return false;}return true;}});if(!entries.length)throw Error('No playable artwork entry');[plaster,relief]=await Promise.all([image('assets/browser/plaster-b1.webp').then(linenBlank),image('assets/browser/paint-relief-b1.webp')]);
  const firstArtist=entries[0].artist,name=config.bandName||(typeof firstArtist==='string'?firstArtist:firstArtist?.name);
