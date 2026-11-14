@@ -2,16 +2,17 @@ import {publishedArtistLinks,externalLinkKey} from './runtime/studio/model.js';
 import {makeArtistLinkGlyph} from './runtime/studio/artist-link-icons.js';
 import {songDestination} from './c1-song-link.js';
 
-export function artistNavigation(catalogue,entry,featured=null){
+export function artistNavigation(catalogue,entry,featured=null,{musicActions=true}={}){
  let links=publishedArtistLinks(catalogue);
- if(featured){
+ if(!musicActions)links=links.filter(link=>!/(^|\.)bandcamp\.com$/i.test(new URL(link.url).hostname));
+ if(musicActions&&featured){
   const key=externalLinkKey(featured.destination),host=new URL(featured.destination).hostname;
   links=links.filter(link=>externalLinkKey(link.url)!==key&&
    !(new URL(link.url).hostname===host&&/^(?:bandcamp|visit bandcamp|listen on bandcamp)$/i.test(link.title)));
   links.unshift({id:'link-automatic-bandcamp',title:'BANDCAMP',icon:'bandcamp',url:featured.destination});
  }
  const destinations=new Set(links.map(l=>externalLinkKey(l.url))),song=songDestination(entry);
- return{links,songURL:song&&!destinations.has(externalLinkKey(song))?song:null,duplicates:url=>!!url&&destinations.has(externalLinkKey(url))};
+ return{links,songURL:musicActions&&song&&!destinations.has(externalLinkKey(song))?song:null,duplicates:url=>!!url&&destinations.has(externalLinkKey(url))};
 }
 const brandHosts={
  'instagram.com':'instagram','spotify.com':'spotify','facebook.com':'facebook',
