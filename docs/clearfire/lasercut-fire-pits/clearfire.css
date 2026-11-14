@@ -2,9 +2,11 @@
 body{background:#070808}
 .scene{background:#101213;color:#eee7dc}
 .scene .environment{background:#090a0b url('assets/browser/clearfire-patio.webp') center/100% 100% no-repeat}
+/* Dim the scenery above the fire pit; its lower band remains untouched. */
+.scene .environment::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.58) 0%,rgba(0,0,0,.58) 46%,rgba(0,0,0,.36) 51%,transparent 57%)}
 .scene .atmosphere{background:none}
 .scene{--art-player-gap:clamp(16px,2.2svh,26px)}
-.clearfire-header{position:absolute;z-index:5;left:50%;bottom:calc(100% - var(--art-top) + 5px);transform:translateX(-50%);max-width:76%;text-align:center;pointer-events:none}
+.clearfire-header{position:absolute;z-index:5;left:50%;top:calc(var(--art-top) + var(--art-size));bottom:auto;transform:translate(-50%,-45%);max-width:min(76%,calc(var(--art-size) * .84));text-align:center;pointer-events:none}
 .clearfire-header img,.clearfire-header h1,.clearfire-header p{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .clearfire-header strong{display:block;padding:3px 18px 4px;color:#f6d9a9;font:500 clamp(10px,3.35vw,24px)/1.05 Georgia,serif;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid #bf965c;border-radius:3px;background:linear-gradient(#4a3324,#1d1511 52%,#302118);box-shadow:inset 0 0 0 2px #a97a4b44,0 3px 9px #000b}
 .scene .artist-plaque,.scene .atelier-maker{display:none}

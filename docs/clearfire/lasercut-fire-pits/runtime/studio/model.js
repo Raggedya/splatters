@@ -1,6 +1,6 @@
 import {validateEmbed} from '../feasibility/bandcamp/embed.js';
 export const SCHEMA_VERSION=1,PACKAGE_SLOTS=10,ARTWORK_LIMIT=10;
-export const SHARED_DESIGN_LIMIT=50;
+export const SHARED_DESIGN_LIMIT=10;
 export const DIRECTORY_SLUG='artists';
 export const DEFAULT_ART_EMAIL='andrewharris501@gmail.com',ART_INFORMATION_LIMIT=6000;
 export const ART_PANEL_MESSAGE_LIMIT=160;
