@@ -94,3 +94,5 @@ body{background:#070808}
 .scene .glass-controls .left-controls .long-label .artist-link-label{font-size:.9em;letter-spacing:0}
 
 .scene .clearfire-hero-brand canvas{filter:drop-shadow(0 2px 1px #080000) drop-shadow(0 1px 1px #ffccaa) drop-shadow(0 3px 3px #b51f16aa)}
+
+.scene .clearfire-hero-brand{width:94%;max-width:780px}

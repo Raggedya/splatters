@@ -1,5 +1,5 @@
 import {drawCover} from './c1-artwork.js';
-import {manufacturerMetal,firepitBadge,manufacturerHero} from './clearfire-brand-metal.js?hero=2';
+import {manufacturerMetal,firepitBadge,manufacturerHero} from './clearfire-brand-metal.js?hero=3';
 
 const SIZE=112;
 const clamp=value=>Math.max(0,Math.min(1,value));
