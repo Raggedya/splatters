@@ -79,6 +79,16 @@ export function manufacturerHero(metal,name){
  let holder=scene.querySelector('.clearfire-hero-brand');
  if(!holder){holder=document.createElement('div');holder.className='clearfire-hero-brand';scene.append(holder);}
  let badge=holder.querySelector('canvas');if(!badge){badge=canvas(1,1);badge.setAttribute('role','img');holder.append(badge);}
- badge.width=metal.hero.width;badge.height=metal.hero.height;badge.getContext('2d').drawImage(metal.hero,0,0);
- badge.setAttribute('aria-label',name+' logo');badge.dataset.logoTreatment=metal.method;
+ // Use one consistent, readable metal title regardless of uploaded logo shape.
+ const title=String(name||'ClearFire').trim().toUpperCase();
+ const words=title.split(/\s+/);let lines=[title];
+ if(title.length>14&&words.length>1){let split=1;for(let i=1;i<words.length;i++)if(Math.abs(words.slice(0,i).join(' ').length-words.slice(i).join(' ').length)<Math.abs(words.slice(0,split).join(' ').length-words.slice(split).join(' ').length))split=i;lines=[words.slice(0,split).join(' '),words.slice(split).join(' ')];}
+ const mask=canvas(1000,lines.length===1?160:260),g=mask.getContext('2d');
+ let size=100;g.font='900 '+size+'px Arial Black, Arial, sans-serif';
+ while(size>20&&lines.some(line=>g.measureText(line).width>940)){size--;g.font='900 '+size+'px Arial Black, Arial, sans-serif';}
+ g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';
+ lines.forEach((line,i)=>g.fillText(line,500,mask.height/2+(i-(lines.length-1)/2)*(size+16)));
+ const titleMetal=finish(mask,false,true);
+ badge.width=titleMetal.width;badge.height=titleMetal.height;badge.getContext('2d').drawImage(titleMetal,0,0);
+ badge.setAttribute('aria-label',title);badge.dataset.logoTreatment='metal-title';
 }

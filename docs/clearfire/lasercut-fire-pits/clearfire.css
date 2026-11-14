@@ -61,7 +61,7 @@ body{background:#070808}
  --hero-height:clamp(48px,9svh,100px);
  --score-height:clamp(40px,5.5svh,52px);
  --player-height:clamp(42px,5.2svh,54px);
- --tile-height:clamp(48px,6.5svh,70px);
+ --tile-height:clamp(76px,9svh,100px);
  --art-top:calc(var(--hero-top) + var(--hero-height) + 14px);
  --art-size:min(calc(var(--studio-width) * .90),52svh,calc(100svh - var(--safe-top) - var(--safe-bottom) - var(--hero-height) - var(--score-height) - var(--player-height) - var(--tile-height) - 185px));
  --score-top:calc(var(--art-top) + var(--art-size) + var(--art-size) * .026);
@@ -80,3 +80,17 @@ body{background:#070808}
 @media(min-height:901px){.scene .launcher{transform:scale(.9)}}
 @media(max-height:735px){.scene .launcher{transform:scale(.57)}}
 @media(max-height:600px){.scene{--hero-height:38px;--hero-top:calc(4px + var(--safe-top));--launcher-top:max(76svh,calc(var(--carousel-top) + var(--tile-height) + 16px))}.scene .launcher{transform:scale(.44)}}
+
+/* Restore roomy metallic action tiles; scroll the row rather than compress words. */
+.scene .glass-controls .left-controls :is(button,a){
+ --cta-height:calc(var(--tile-height) + 6px);
+ --cta-width:calc(var(--cta-height) * 20 / 21);
+ font-size:clamp(10px,1.4svh,13px);line-height:1.12;letter-spacing:0;
+ padding:6px;gap:5px;flex-shrink:0;
+}
+.scene .glass-controls .left-controls .artist-link-label{overflow-wrap:normal;word-break:normal;text-wrap:balance}
+.scene .glass-controls .left-controls .artist-link-label.single-word{white-space:nowrap;font-size:.9em}
+.scene .glass-controls .left-controls .artist-link.long-label{padding:6px;gap:5px}
+.scene .glass-controls .left-controls .long-label .artist-link-label{font-size:.9em;letter-spacing:0}
+
+.scene .clearfire-hero-brand canvas{filter:drop-shadow(0 2px 1px #080000) drop-shadow(0 1px 1px #ffccaa) drop-shadow(0 3px 3px #b51f16aa)}
