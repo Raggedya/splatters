@@ -10,7 +10,7 @@ import {ProgressiveReveal} from './c1-progressive.js';
 import {installControlCarousel} from './c1-control-chain.js';
 import {ActionTiming} from './c1-action-timing.js';
 import {ARTWORK_LIMIT,SHARED_DESIGN_LIMIT,commerceURL,songArtworks} from './runtime/studio/model.js';
-import {artistNavigation,renderArtistNavigation} from './c1-artist-links.js';
+import {artistNavigation,renderArtistNavigation} from './c1-artist-links.js?music-actions=2';
 import {eligibleCatalogue,nextSongIndex} from './c1-catalogue.js';
 import {activity,initialiseAnalytics,eventUUID,reportingDestination} from './c1-analytics.js?v=2';
 import {manualEmbed} from './c1-manual-player.js';
