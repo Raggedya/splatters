@@ -55,8 +55,28 @@ body{background:#070808}
 .clearfire-return-cover{position:absolute;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;transform:translateZ(.17px)}
 .clearfire-finished-title{position:absolute;bottom:0;left:0;right:0;padding:12px;background:#27190fee;color:#ffe0ab;text-align:center;font:600 15px Georgia,serif;z-index:7}
 
-/* The uploaded manufacturer logo has its own space below the scoreboard. */
-.scene{--hero-top:calc(62px + var(--safe-top));--hero-height:clamp(48px,8svh,88px);--art-top:calc(var(--hero-top) + var(--hero-height) + 19px);--art-size:min(calc(var(--studio-width) * .75),calc(70svh - var(--art-top) - 122px))}
-.clearfire-hero-brand{position:absolute;z-index:5;top:var(--hero-top);height:var(--hero-height);left:50%;width:82%;max-width:600px;transform:translateX(-50%);display:flex;justify-content:center;align-items:center;pointer-events:none;background:radial-gradient(ellipse,#050505b0,transparent 70%)}
+/* Manufacturer-first composition: logo, square artwork, scores, music, actions. */
+.scene{
+ --hero-top:calc(8px + var(--safe-top));
+ --hero-height:clamp(48px,9svh,100px);
+ --score-height:clamp(40px,5.5svh,52px);
+ --player-height:clamp(42px,5.2svh,54px);
+ --tile-height:clamp(48px,6.5svh,70px);
+ --art-top:calc(var(--hero-top) + var(--hero-height) + 14px);
+ --art-size:min(calc(var(--studio-width) * .90),52svh,calc(100svh - var(--safe-top) - var(--safe-bottom) - var(--hero-height) - var(--score-height) - var(--player-height) - var(--tile-height) - 185px));
+ --score-top:calc(var(--art-top) + var(--art-size) + var(--art-size) * .026);
+ --player-top:calc(var(--score-top) + var(--score-height) + 10px);
+ --carousel-top:calc(var(--player-top) + var(--player-height) + 10px);
+ --launcher-top:max(77svh,calc(var(--carousel-top) + var(--tile-height) + 20px));
+}
+.clearfire-header{display:none}
+.clearfire-hero-brand{position:absolute;z-index:5;top:var(--hero-top);height:var(--hero-height);left:50%;width:86%;max-width:600px;transform:translateX(-50%);display:flex;justify-content:center;align-items:center;pointer-events:none;background:radial-gradient(ellipse,#050505b0,transparent 70%)}
 .clearfire-hero-brand canvas{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 1px #080000) drop-shadow(0 2px 4px #ed34124a)}
-@media(max-height:600px){.scene{--hero-top:calc(60px + var(--safe-top));--hero-height:32px;--art-top:calc(var(--hero-top) + 43px);--art-size:min(calc(var(--studio-width) * .65),30svh)}}
+.scene .clearfire-score{top:var(--score-top);width:calc(var(--art-size) * 1.052);height:var(--score-height);border-radius:0 0 9px 9px;padding:5px 6px 4px;border-color:#b98652;background:linear-gradient(150deg,#30291ff5,#101112fa 65%)}
+.scene .player-slot{left:10%;width:80%}
+.scene .design-caption{inset:calc(var(--player-top) - 10px) 12% auto;font-size:8px;min-height:9px}
+.scene .carousel-dock{grid-template-columns:clamp(20px,4.5vw,34px) minmax(0,1fr) clamp(20px,4.5vw,34px)}
+.scene .launcher{transform:scale(.75)}
+@media(min-height:901px){.scene .launcher{transform:scale(.9)}}
+@media(max-height:735px){.scene .launcher{transform:scale(.57)}}
+@media(max-height:600px){.scene{--hero-height:38px;--hero-top:calc(4px + var(--safe-top));--launcher-top:max(76svh,calc(var(--carousel-top) + var(--tile-height) + 16px))}.scene .launcher{transform:scale(.44)}}
