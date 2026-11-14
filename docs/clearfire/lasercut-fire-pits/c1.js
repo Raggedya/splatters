@@ -2,7 +2,7 @@ import {CompletionReturn} from './clearfire-return.js';
 import {installScore} from './clearfire-score.js?strategy=2';
 import {FlightClock} from './clearfire-flight-clock.js';
 import {FlightVisual} from './clearfire-flight.js';
-import {SteelReveal} from './clearfire-renderer.js';
+import {SteelReveal} from './clearfire-renderer.js?hero=1';
 import {FireLayer,impactSparks} from './runtime/engine/fire-effects.js';
 import {ArtworkEnquiry} from './c1-art.js?return=1';
 import {effectiveBandcamp,loadAmbientMusic,withAmbientMusic} from './c1-ambient.js';

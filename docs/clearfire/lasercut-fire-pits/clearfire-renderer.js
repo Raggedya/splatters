@@ -1,5 +1,5 @@
 import {drawCover} from './c1-artwork.js';
-import {manufacturerMetal,firepitBadge} from './clearfire-brand-metal.js';
+import {manufacturerMetal,firepitBadge,manufacturerHero} from './clearfire-brand-metal.js?hero=1';
 
 const SIZE=112;
 const clamp=value=>Math.max(0,Math.min(1,value));
@@ -92,7 +92,7 @@ export class SteelReveal{
    g.fillStyle=finish;g.fillText(label,size/2,y,310);
   };
   const metal=manufacturerMetal(logo,name);
-  firepitBadge(metal,name);
+  firepitBadge(metal,name);manufacturerHero(metal,name);
   if(logo&&!demo&&logo.naturalWidth){
    const scale=Math.min(290/metal.steel.width,104/metal.steel.height);
    const w=metal.steel.width*scale,h=metal.steel.height*scale;

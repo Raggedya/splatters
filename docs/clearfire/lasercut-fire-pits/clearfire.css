@@ -54,3 +54,9 @@ body{background:#070808}
 
 .clearfire-return-cover{position:absolute;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;transform:translateZ(.17px)}
 .clearfire-finished-title{position:absolute;bottom:0;left:0;right:0;padding:12px;background:#27190fee;color:#ffe0ab;text-align:center;font:600 15px Georgia,serif;z-index:7}
+
+/* The uploaded manufacturer logo has its own space below the scoreboard. */
+.scene{--hero-top:calc(62px + var(--safe-top));--hero-height:clamp(48px,8svh,88px);--art-top:calc(var(--hero-top) + var(--hero-height) + 19px);--art-size:min(calc(var(--studio-width) * .75),calc(70svh - var(--art-top) - 122px))}
+.clearfire-hero-brand{position:absolute;z-index:5;top:var(--hero-top);height:var(--hero-height);left:50%;width:82%;max-width:600px;transform:translateX(-50%);display:flex;justify-content:center;align-items:center;pointer-events:none;background:radial-gradient(ellipse,#050505b0,transparent 70%)}
+.clearfire-hero-brand canvas{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 1px #080000) drop-shadow(0 2px 4px #ed34124a)}
+@media(max-height:600px){.scene{--hero-top:calc(60px + var(--safe-top));--hero-height:32px;--art-top:calc(var(--hero-top) + 43px);--art-size:min(calc(var(--studio-width) * .65),30svh)}}
