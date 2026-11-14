@@ -2,7 +2,7 @@
 export class FireScore {
  constructor(storage){this.storage=storage;this.key='';this.best=null;this.committed=false;}
  reset(collection){
-  this.key='clearfire:screen-shots:strategy-v1:'+JSON.stringify(collection);
+  this.key='clearfire:screen-shots:strategy-v2:'+JSON.stringify(collection);
   this.best=null;this.committed=false;
   try{const n=JSON.parse(this.storage?.getItem(this.key)||'null');if(Number.isSafeInteger(n)&&n>0)this.best=n;}catch{}
  }

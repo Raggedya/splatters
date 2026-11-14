@@ -1,8 +1,8 @@
-import {RevealAssist} from './c1-reveal-assist.js?strategy=1';
+import {RevealAssist} from './c1-reveal-assist.js?strategy=2';
 import {RunningPaint} from './runtime/vendor/splat-v9/running-paint.js';
 import {PAINT} from './c1-tuning.js';
 // A finite burst: placement and overlap determine progress.
-const STRATEGY_RADIUS=.235;
+const STRATEGY_RADIUS=.2585;
 const clamp=x=>Math.max(0,Math.min(1,x));
 const ease=x=>1-Math.pow(1-clamp(x),3);
 const seeded=()=>{let seed=384;return()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);};
@@ -25,6 +25,7 @@ export class CinematicPaint {
   }
   if(this.drips.length>PAINT.maxDrips)this.drips.splice(0,this.drips.length-PAINT.maxDrips);
  }
+ considerFinish(coverage){if(!this.complete)this.assist.start(this.launches,coverage);}
  step(dt){const f=this.field;this.steps++;if(!this.active)return false;f.time+=dt;
   for(const e of f.effects){const previous=e.age;e.age+=dt;
    if(previous<PAINT.spreadSeconds){const t=ease(e.age/PAINT.spreadSeconds);f.stamp(e,e.r*(.5+.5*t));
@@ -42,11 +43,10 @@ export class CinematicPaint {
    if(!s.branched&&s.age>=PAINT.branchAfter&&s.r>2&&this.drips.length<PAINT.maxDrips){s.branched=true;const x=s.x+s.drift*Math.sin(t*Math.PI/2);this.drips.push({...s,x,y:s.tip,tip:s.tip,age:0,r:s.r*.65,distance:s.distance*.4,drift:-s.drift*.7,duration:s.duration*.7,branched:true});}
   }
   this.drips=this.drips.filter(s=>s.age<s.duration);
-  if(this.assistPending>0&&!f.effects.length&&!this.drips.length){this.assistPending=0;this.assist.start(this.launches);}
+  if(this.assistPending>0&&!f.effects.length&&!this.drips.length){this.assistPending=0;}
   this.assist.step(dt);
   f.measure();
-  // Completion requires the reveal mask to be opaque everywhere. Never grow
-  // unrelated cells to award a finish; running paint alone adds coverage.
+  // The final 3% is filled by the coverage-triggered finishing burn.
   this.complete=f.cover.every((value,i)=>!f.mask[i]||value>=.4);
   if(this.complete){this.drips=[];f.effects=[];}
   this.dirty=true;return true;

@@ -1,4 +1,4 @@
-import {installScore} from './clearfire-score.js?strategy=1';
+import {installScore} from './clearfire-score.js?strategy=2';
 import {SteelReveal} from './clearfire-renderer.js';
 import {FireLayer,drawImpact} from './runtime/engine/fire-effects.js';
 import {ArtworkEnquiry} from './c1-art.js';
@@ -21,7 +21,7 @@ import {LivingField} from './runtime/engine/living-field.js';
 import {icon} from './runtime/engine/floating-controls.js';
 import {FirstPlayTutorial} from './runtime/engine/bandcamp-player.js';
 import {ProgressStore} from './runtime/engine/progress-store.js';
-import {CinematicPaint} from './c1-wet-paint.js?strategy=1';
+import {CinematicPaint} from './c1-wet-paint.js?strategy=2';
 import {LiveMaterial} from './c1-live-material.js';
 import {PAINT,ARCADE} from './c1-tuning.js';
 import {LauncherSession,planeFromMatrix,pointOnPlane,project,elasticGeometry,predictShot,inputForTarget} from './c1-physics.js';
@@ -80,7 +80,7 @@ function refreshRail(force=false){
  controlCarousel.refresh();
 }
 function message(text){if(status.textContent!==text)status.textContent=text;}
-function applyPaint(study){const c=$('surface'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);if(config?.clearfire)steel.update(source.steelArtwork,study.mask,study.coverage,config.clearfire,paint.complete);else{g.drawImage(previousSource||plaster,0,0,c.width,c.height);g.drawImage(study.colour,0,0);}gloss.width=c.width;gloss.height=c.height;const lighting=gloss.getContext('2d');if(!config?.clearfire)lighting.drawImage(study.lighting,0,0,c.width,c.height);if(!paint.complete)fire.draw(lighting,field,paint.drips,study.mask,{width:c.width,height:c.height,burst:PAINT.burstSeconds,spread:PAINT.spreadSeconds,reduced:reduced.matches});coverage=reveal.update(study.coverage);scene.classList.toggle('complete',reveal.complete);scene.classList.toggle('settled',reveal.complete&&!paint.active);if(reveal.coverages[reveal.stage]===1)reportArtworkReveal();if(reveal.complete&&!paint.active){actionTiming.artworkComplete(coverage===1?1:0);}updateArtworkCounter();scene.style.setProperty('--progress',coverage);}
+function applyPaint(study){if(config?.clearfire)paint.considerFinish(study.coverage);const c=$('surface'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);if(config?.clearfire)steel.update(source.steelArtwork,study.mask,study.coverage,config.clearfire,paint.complete);else{g.drawImage(previousSource||plaster,0,0,c.width,c.height);g.drawImage(study.colour,0,0);}gloss.width=c.width;gloss.height=c.height;const lighting=gloss.getContext('2d');if(!config?.clearfire)lighting.drawImage(study.lighting,0,0,c.width,c.height);if(!paint.complete)fire.draw(lighting,field,paint.drips,study.mask,{width:c.width,height:c.height,burst:PAINT.burstSeconds,spread:PAINT.spreadSeconds,reduced:reduced.matches});coverage=reveal.update(study.coverage);scene.classList.toggle('complete',reveal.complete);scene.classList.toggle('settled',reveal.complete&&!paint.active);if(reveal.coverages[reveal.stage]===1)reportArtworkReveal();if(reveal.complete&&!paint.active){actionTiming.artworkComplete(coverage===1?1:0);}updateArtworkCounter();scene.style.setProperty('--progress',coverage);}
 function artworkAnalytics(){
  const artwork=artworks[reveal.stage];
  return artwork?{artworkId:artwork.id,number:entries.slice(0,index).reduce((sum,entry)=>sum+songArtworks(entry).length,0)+reveal.stage+1}:null;
@@ -172,7 +172,9 @@ function draw(){if(!geometry||!session||selecting)return;const counted=reportedL
  if(!session.ball&&session.phase!=='dragging'){
   if(reveal.complete)session.phase='complete';
   else if(reveal.awaitingNextImpact&&!nextSource)session.phase='settling';
+  else if(paint.assist.active)session.phase='settling';
   else if(paint.complete)session.phase='ready';
+  else if(session.phase==='settling')session.phase='ready';
 
  }
  updateGameScore();updateArtPresentation();
